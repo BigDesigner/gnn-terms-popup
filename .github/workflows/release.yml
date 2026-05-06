@@ -1,0 +1,70 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_override:
+        description: 'Version Override (Optional, e.g., 1.3.1). If empty, version will be read from gnn-terms-popup.php'
+        required: false
+        default: ''
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Extract Version from gnn-terms-popup.php
+        id: get_version
+        run: |
+          VERSION_INPUT="${{ github.event.inputs.version_override }}"
+          if [ -n "$VERSION_INPUT" ]; then
+            VERSION="$VERSION_INPUT"
+          else
+            VERSION=$(grep -m 1 "Version:" gnn-terms-popup.php | awk '{print $NF}')
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create Build Directory and Zip
+        run: |
+          # Define zip name
+          ZIP_NAME="gnn-terms-popup-${{ env.VERSION }}.zip"
+          
+          # Create a temporary directory for clean build and a subfolder for the plugin
+          mkdir -p build/gnn-terms-popup
+          
+          # Use rsync to copy files, excluding dev files and AI context
+          rsync -av --exclude='build' \
+                    --exclude='.git' \
+                    --exclude='.github' \
+                    --exclude='memory-bank' \
+                    --exclude='.gitignore' \
+                    --exclude='*.md' \
+                    ./ build/gnn-terms-popup/
+          
+          # Include only essential markdown files in the release
+          cp CHANGELOG.md build/gnn-terms-popup/
+          cp README.md build/gnn-terms-popup/
+          
+          # Zip the build directory
+          cd build && zip -r "../$ZIP_NAME" gnn-terms-popup && cd ..
+          
+          echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }}
+          files: ${{ env.ZIP_NAME }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

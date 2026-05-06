@@ -1,0 +1,50 @@
+# OS Files
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Composer
+vendor/
+composer.lock
+
+# Build tools
+dist/
+build/
+.cache/
+
+# WordPress Specific
+# Note: If this is a theme-only repo, we don't ignore wp-config.php etc.
+# But we should ignore local dev artifacts if any.
+.env
+local-config.php
+
+# Antigravity / Agent Specific
+# Ignore memory-bank as it is intended for local AI context only
+memory-bank/
+.antigravity/
+.gemini/
+
+# ----------------------------------------------------------------------
+# Local Test Environments (DO NOT PUSH)
+# ----------------------------------------------------------------------
+tests/
+playwright.config.js
+playwright-report/
+test-results/
+blueprint.json
+package.json
+package-lock.json
+assets/images/
