@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GNN Terms Popup
  * Description: One-time Terms acceptance popup with admin settings and inline expanding Legal text (no redirect).
- * Version: 1.3.2
+ * Version: 1.3.3
  * Author: BigDesigner
  * Text Domain: gnn-terms-popup
  */
@@ -88,8 +88,6 @@ class GNN_Terms_Popup {
     );
 
     $links = array_merge($new_links, $links);
-
-    $links['check_plugin'] = '<a href="https://www.bigdesigner.com/plugins/gnn-terms-popup" target="_blank">' . __('Check this plugin', 'gnn-terms-popup') . '</a>';
 
     return $links;
   }
