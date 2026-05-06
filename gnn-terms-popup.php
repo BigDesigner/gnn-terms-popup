@@ -2,12 +2,17 @@
 /**
  * Plugin Name: GNN Terms Popup
  * Description: One-time Terms acceptance popup with admin settings and inline expanding Legal text (no redirect).
- * Version: 1.3.1
+ * Version: 1.3.2
  * Author: BigDesigner
  * Text Domain: gnn-terms-popup
  */
 
 if (!defined('ABSPATH')) exit;
+
+// Include the GitHub updater
+if (file_exists(plugin_dir_path(__FILE__) . 'inc/updater.php')) {
+    require_once plugin_dir_path(__FILE__) . 'inc/updater.php';
+}
 
 class GNN_Terms_Popup {
   const OPT_KEY = 'gnn_terms_popup_options';
@@ -23,6 +28,9 @@ class GNN_Terms_Popup {
 
     add_action('wp_enqueue_scripts', [$this, 'enqueue_front']);
     add_action('wp_footer',          [$this, 'render_modal']);
+
+    // Add plugin action links
+    add_filter('plugin_action_links_' . plugin_basename(__FILE__), [$this, 'plugin_action_links']);
   }
 
   /* ---------------- Defaults / Activation ---------------- */
@@ -65,6 +73,25 @@ class GNN_Terms_Popup {
       'gnn-terms-popup',
       [$this, 'settings_page']
     );
+  }
+
+  public function plugin_action_links($links) {
+    $donate_link = '<a href="https://buymeacoffee.com/bigdesigner" target="_blank" style="font-weight:bold; color:#d63638;">' . __('Donate', 'gnn-terms-popup') . '</a>';
+    $settings_link = '<a href="options-general.php?page=gnn-terms-popup">' . __('Settings', 'gnn-terms-popup') . '</a>';
+    $update_url = wp_nonce_url(admin_url('plugins.php?gnn_terms_check_update=1'), 'gnn_terms_manual_update');
+    $update_link = '<a href="' . esc_url($update_url) . '">' . __('Check Updates', 'gnn-terms-popup') . '</a>';
+
+    $new_links = array(
+        'donate'   => $donate_link,
+        'settings' => $settings_link,
+        'updates'  => $update_link,
+    );
+
+    $links = array_merge($new_links, $links);
+
+    $links['check_plugin'] = '<a href="https://www.bigdesigner.com/plugins/gnn-terms-popup" target="_blank">' . __('Check this plugin', 'gnn-terms-popup') . '</a>';
+
+    return $links;
   }
 
   public function register_settings() {
@@ -163,6 +190,27 @@ class GNN_Terms_Popup {
       </form>
       <hr>
       <p><strong>Tips:</strong> If <em>Legal Content Source</em> = <code>Page</code>, the plugin will load the content of the page with that slug and show it inline inside the popup when the user clicks “Read Terms”. If you prefer to manage it directly here, select <code>Custom</code> and paste your full Legal text.</p>
+
+      <hr>
+      <div class="gnn-ipinfo-status-card" style="background:#fff; padding:20px; border:1px solid #ccd0d4; border-radius:4px; max-width:400px;">
+          <h2><?php _e('GNN System Info', 'gnn-terms-popup'); ?></h2>
+          <div class="gnn-ipinfo-status-item" style="margin-bottom:10px;">
+              <span class="gnn-ipinfo-status-label" style="font-weight:bold;"><?php _e('Plugin Version:', 'gnn-terms-popup'); ?></span>
+              <span class="gnn-ipinfo-status-value">
+                  <?php 
+                  if (!function_exists('get_plugin_data')) {
+                      require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+                  }
+                  $plugin_data = get_plugin_data(__FILE__);
+                  echo esc_html($plugin_data['Version']); 
+                  ?>
+              </span>
+          </div>
+          <div class="gnn-ipinfo-status-item">
+              <span class="gnn-ipinfo-status-label" style="font-weight:bold;"><?php _e('GitHub Repository:', 'gnn-terms-popup'); ?></span>
+              <span class="gnn-ipinfo-status-value">BigDesigner/gnn-terms-popup</span>
+          </div>
+      </div>
     </div>
     <?php
   }
