@@ -47,10 +47,6 @@ jobs:
                     --exclude='*.md' \
                     ./ build/gnn-terms-popup/
           
-          # Include only essential markdown files in the release
-          cp CHANGELOG.md build/gnn-terms-popup/
-          cp README.md build/gnn-terms-popup/
-          
           # Zip the build directory
           cd build && zip -r "../$ZIP_NAME" gnn-terms-popup && cd ..
           
