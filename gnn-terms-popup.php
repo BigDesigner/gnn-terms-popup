@@ -2,9 +2,11 @@
 /**
  * Plugin Name: GNN Terms Popup
  * Description: One-time Terms acceptance popup with admin settings and inline expanding Legal text (no redirect).
- * Version: 1.3.4
+ * Version: 1.3.5
  * Author: BigDesigner
  * Author URI: https://github.com/BigDesigner
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: gnn-terms-popup
  */
 
