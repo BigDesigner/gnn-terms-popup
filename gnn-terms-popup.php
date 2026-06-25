@@ -79,10 +79,10 @@ class GNN_Terms_Popup {
   }
 
   public function plugin_action_links($links) {
-    $donate_link = '<a href="https://buymeacoffee.com/bigdesigner" target="_blank" style="font-weight:bold; color:#d63638;">' . __('Donate', 'gnn-terms-popup') . '</a>';
-    $settings_link = '<a href="options-general.php?page=gnn-terms-popup">' . __('Settings', 'gnn-terms-popup') . '</a>';
+    $donate_link = '<a href="https://buymeacoffee.com/bigdesigner" target="_blank" style="font-weight:bold; color:#d63638;">' . esc_html__('Donate', 'gnn-terms-popup') . '</a>';
+    $settings_link = '<a href="' . admin_url('options-general.php?page=gnn-terms-popup') . '">' . esc_html__('Settings', 'gnn-terms-popup') . '</a>';
     $update_url = wp_nonce_url(admin_url('plugins.php?gnn_terms_check_update=1'), 'gnn_terms_manual_update');
-    $update_link = '<a href="' . esc_url($update_url) . '">' . __('Check Updates', 'gnn-terms-popup') . '</a>';
+    $update_link = '<a href="' . esc_url($update_url) . '">' . esc_html__('Check Updates', 'gnn-terms-popup') . '</a>';
 
     $new_links = array(
         'donate'   => $donate_link,
