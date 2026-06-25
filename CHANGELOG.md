@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.6] - 2026-06-26
+### Changed
+- **Security Hardening (Defense in Depth):** Added native escaping functions (`esc_html__`, `esc_html`, `esc_attr`, `esc_html_e`, `esc_attr_e`) across settings forms and rendering functions to prevent translation-based XSS exploits.
+- **i18n & Localization:** Wrapped missing settings titles, button labels, and descriptions in translation hooks for improved multilingual support.
+
 ## [1.3.5] - 2026-05-07
 ### Changed
 - **License:** Updated to GPLv2 or later for better compatibility and future-proofing.

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GNN Terms Popup
  * Description: One-time Terms acceptance popup with admin settings and inline expanding Legal text (no redirect).
- * Version: 1.3.5
+ * Version: 1.3.6
  * Author: BigDesigner
  * Author URI: https://github.com/BigDesigner
  * License: GPLv2 or later
@@ -98,8 +98,8 @@ class GNN_Terms_Popup {
   public function register_settings() {
     register_setting(self::OPT_KEY, self::OPT_KEY, [$this, 'sanitize']);
 
-    add_settings_section('gnn_main', __('Modal Content', 'gnn-terms-popup'), function () {
-      echo '<p>' . __('Configure popup content, behavior, and legal source.', 'gnn-terms-popup') . '</p>';
+    add_settings_section('gnn_main', esc_html__('Modal Content', 'gnn-terms-popup'), function () {
+      echo '<p>' . esc_html__('Configure popup content, behavior, and legal source.', 'gnn-terms-popup') . '</p>';
     }, 'gnn-terms-popup');
 
     add_settings_field('title', __('Title', 'gnn-terms-popup'), [$this, 'field_title'], 'gnn-terms-popup', 'gnn_main');
@@ -114,14 +114,14 @@ class GNN_Terms_Popup {
     add_settings_field('cookie_days', __('Cookie Lifetime (days)', 'gnn-terms-popup'), [$this, 'field_days'], 'gnn-terms-popup', 'gnn_main');
     add_settings_field('skip_admins', __('Skip for Admins', 'gnn-terms-popup'), [$this, 'field_skip'], 'gnn-terms-popup', 'gnn_main');
 
-    add_settings_section('gnn_scope', __('Display Scope', 'gnn-terms-popup'), function () {
-      echo '<p>' . __('Where should the popup appear?', 'gnn-terms-popup') . '</p>';
+    add_settings_section('gnn_scope', esc_html__('Display Scope', 'gnn-terms-popup'), function () {
+      echo '<p>' . esc_html__('Where should the popup appear?', 'gnn-terms-popup') . '</p>';
     }, 'gnn-terms-popup');
 
     add_settings_field('show_scope', __('Scope', 'gnn-terms-popup'), [$this, 'field_scope'], 'gnn-terms-popup', 'gnn_scope');
 
-    add_settings_section('gnn_style', __('Appearance', 'gnn-terms-popup'), function () {
-      echo '<p>' . __('Customize colors to match your brand.', 'gnn-terms-popup') . '</p>';
+    add_settings_section('gnn_style', esc_html__('Appearance', 'gnn-terms-popup'), function () {
+      echo '<p>' . esc_html__('Customize colors to match your brand.', 'gnn-terms-popup') . '</p>';
     }, 'gnn-terms-popup');
 
     add_settings_field('primary_color', __('Primary Color (Yellow)', 'gnn-terms-popup'), [$this, 'field_color_primary'], 'gnn-terms-popup', 'gnn_style');
@@ -194,9 +194,9 @@ class GNN_Terms_Popup {
 
       <hr>
       <div class="gnn-ipinfo-status-card" style="background:#fff; padding:20px; border:1px solid #ccd0d4; border-radius:4px; max-width:400px;">
-          <h2><?php _e('GNN System Info', 'gnn-terms-popup'); ?></h2>
+          <h2><?php esc_html_e('GNN System Info', 'gnn-terms-popup'); ?></h2>
           <div class="gnn-ipinfo-status-item" style="margin-bottom:10px;">
-              <span class="gnn-ipinfo-status-label" style="font-weight:bold;"><?php _e('Plugin Version:', 'gnn-terms-popup'); ?></span>
+              <span class="gnn-ipinfo-status-label" style="font-weight:bold;"><?php esc_html_e('Plugin Version:', 'gnn-terms-popup'); ?></span>
               <span class="gnn-ipinfo-status-value">
                   <?php 
                   if (!function_exists('get_plugin_data')) {
@@ -208,7 +208,7 @@ class GNN_Terms_Popup {
               </span>
           </div>
           <div class="gnn-ipinfo-status-item">
-              <span class="gnn-ipinfo-status-label" style="font-weight:bold;"><?php _e('GitHub Repository:', 'gnn-terms-popup'); ?></span>
+              <span class="gnn-ipinfo-status-label" style="font-weight:bold;"><?php esc_html_e('GitHub Repository:', 'gnn-terms-popup'); ?></span>
               <span class="gnn-ipinfo-status-value">BigDesigner/gnn-terms-popup</span>
           </div>
       </div>
@@ -305,9 +305,10 @@ class GNN_Terms_Popup {
     $o = get_option(self::OPT_KEY, $this->get_defaults());
     $checked = !empty($o['skip_admins']) ? 'checked' : '';
     printf(
-      '<label><input type="checkbox" name="%s[skip_admins]" value="1" %s> Do not show to administrators</label>',
+      '<label><input type="checkbox" name="%s[skip_admins]" value="1" %s> %s</label>',
       esc_attr(self::OPT_KEY),
-      $checked
+      esc_attr($checked),
+      esc_html__('Do not show to administrators', 'gnn-terms-popup')
     );
   }
 
@@ -316,16 +317,16 @@ class GNN_Terms_Popup {
     ?>
     <label>
       <input type="radio" name="<?php echo esc_attr(self::OPT_KEY); ?>[show_everywhere]" value="1" <?php checked(1, intval($o['show_everywhere'] ?? 1)); ?>>
-      Show on all public pages
+      <?php esc_html_e('Show on all public pages', 'gnn-terms-popup'); ?>
     </label>
     <br>
     <label>
       <input type="radio" name="<?php echo esc_attr(self::OPT_KEY); ?>[show_everywhere]" value="0" <?php checked(0, intval($o['show_everywhere'] ?? 1)); ?>>
-      Only on these paths (comma-separated)
+      <?php esc_html_e('Only on these paths (comma-separated)', 'gnn-terms-popup'); ?>
     </label>
     <br>
     <input type="text" name="<?php echo esc_attr(self::OPT_KEY); ?>[include_paths]" value="<?php echo esc_attr($o['include_paths'] ?? ''); ?>" class="regular-text" style="width:520px" placeholder="/ , /about , /services">
-    <p class="description">Use site-relative paths. Example: <code>/</code>, <code>/prices</code>, <code>/contact</code>.</p>
+    <p class="description"><?php printf(esc_html__('Use site-relative paths. Example: %s, %s, %s.', 'gnn-terms-popup'), '<code>/</code>', '<code>/prices</code>', '<code>/contact</code>'); ?></p>
     <?php
   }
 
@@ -597,16 +598,16 @@ class GNN_Terms_Popup {
         <div class="gnn-body"><?php echo wp_kses_post($intro_body); ?></div>
 
         <div class="gnn-terms-actions">
-          <button id="gnn-accept" class="gnn-btn" type="button" aria-label="<?php echo esc_attr($accept_label); ?>"><?php echo $accept_label; ?></button>
-          <button id="gnn-read" class="gnn-btn secondary" type="button" aria-expanded="false" aria-controls="gnn-terms-full"><?php echo $read_label; ?></button>
+          <button id="gnn-accept" class="gnn-btn" type="button" aria-label="<?php echo esc_attr($accept_label); ?>"><?php echo esc_html($accept_label); ?></button>
+          <button id="gnn-read" class="gnn-btn secondary" type="button" aria-expanded="false" aria-controls="gnn-terms-full"><?php echo esc_html($read_label); ?></button>
         </div>
 
         <div id="gnn-terms-full" class="gnn-terms-full" aria-hidden="true" tabindex="-1">
           <?php echo wp_kses_post($legal_html); ?>
         </div>
 
-        <p class="gnn-small">You must accept to continue using this site.</p>
-        <noscript><p>Please enable JavaScript to proceed.</p></noscript>
+        <p class="gnn-small"><?php esc_html_e('You must accept to continue using this site.', 'gnn-terms-popup'); ?></p>
+        <noscript><p><?php esc_html_e('Please enable JavaScript to proceed.', 'gnn-terms-popup'); ?></p></noscript>
       </div>
     </div>
     <?php

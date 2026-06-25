@@ -3,8 +3,7 @@
 This document maps out the current project state, active sprint goals, immediate actions, and the feature backlog.
 
 ## 1. Project State & Release Readiness
-* **Current Stable Version:** `1.3.5`
-* **In-Progress Version:** `1.3.6` (consists of uncommitted output escaping and label localization changes in `gnn-terms-popup.php`)
+* **Current Stable Version:** `1.3.6`
 * **Release Readiness:** Production-ready packaging is handled via GitHub Actions. A clean git state must be achieved before releasing.
 
 ## 2. Active Sprint (v1.4.0)

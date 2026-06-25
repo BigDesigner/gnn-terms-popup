@@ -4,7 +4,7 @@ This document tracks all completed work, release history, and recent updates for
 
 ## 🚀 Release History & Changelogs
 
-### [1.3.6] - Uncommitted (In Progress)
+### [1.3.6] - 2026-06-26
 - **Security & UX Hardening:**
   - Added native escaping functions (`esc_html__`, `esc_html`, `esc_attr`, `esc_html_e`, `esc_attr_e`) across settings forms and description blocks to harden output security.
   - Implemented internationalization for missing admin interface labels.
