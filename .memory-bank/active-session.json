@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "session_id": "74dca471-615c-4eab-8753-8f709d853e78",
+  "status": "INITIALIZATION",
+  "mode": "Interactive",
+  "timestamp": "2026-06-26T02:00:24+03:00",
+  "active_branch": "main",
+  "last_commit": "6e7a577c227181c00224df0896ad2c5c9359e1bf",
+  "git_history_available": true,
+  "worktree_status": "dirty",
+  "concurrency_lock": {
+    "is_locked": false,
+    "locked_by": null,
+    "lock_acquired_at": null
+  },
+  "current_sprint": {
+    "sprint_id": "v1.4.0",
+    "active_tasks": [
+      "i18n-INIT",
+      "UI-ENHANCE",
+      "SEC-REVIEW"
+    ]
+  },
+  "tracked_memory_areas": {
+    "adr": ".memory-bank/adr/",
+    "changelog": ".memory-bank/changelog/",
+    "audits": ".memory-bank/audits/",
+    "bugs": ".memory-bank/bugs/",
+    "tasks": ".tasks/",
+    "archive": ".archive/docs-migration/"
+  }
+}
