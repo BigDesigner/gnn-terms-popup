@@ -4,6 +4,11 @@ This document tracks all completed work, release history, and recent updates for
 
 ## 🚀 Release History & Changelogs
 
+### [1.3.9] - 2026-06-26
+- **Security Hardening:**
+  - Added input parameter validation check to confirm it is an array in the Settings API sanitizer callback.
+  - Mitigated type-confusion vulnerabilities.
+
 ### [1.3.8] - 2026-06-26
 - **CSS/JS Load Stability:**
   - Consolidated CSS styling and Javascript logic blocks directly inline inside `render_modal` within the footer output.

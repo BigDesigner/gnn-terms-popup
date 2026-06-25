@@ -3,7 +3,7 @@
 This document maps out the current project state, active sprint goals, immediate actions, and the feature backlog.
 
 ## 1. Project State & Release Readiness
-* **Current Stable Version:** `1.3.8`
+* **Current Stable Version:** `1.3.9`
 * **Release Readiness:** Production-ready packaging is handled via GitHub Actions. A clean git state must be achieved before releasing.
 
 ## 2. Active Sprint (v1.4.0)

@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.9] - 2026-06-26
+### Fixed
+- **Security Hardening:** Implemented a type validation check (`is_array()`) inside the Settings API sanitizer callback to reject malformed or invalid inputs, preventing potential type confusion warnings.
+
 ## [1.3.8] - 2026-06-26
 ### Fixed
 - **CSS/JS Load Stability:** Consolidated CSS styling and Javascript logic blocks directly inline inside `render_modal` within the footer output. This resolves modal visibility bugs and load errors on production sites utilizing CSS/JS minification or caching optimization plugins (e.g. WP Rocket, LiteSpeed Cache).
