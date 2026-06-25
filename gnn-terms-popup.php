@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GNN Terms Popup
  * Description: One-time Terms acceptance popup with admin settings and inline expanding Legal text (no redirect).
- * Version: 1.3.6
+ * Version: 1.3.7
  * Author: BigDesigner
  * Author URI: https://github.com/BigDesigner
  * License: GPLv2 or later
@@ -69,18 +69,20 @@ class GNN_Terms_Popup {
   /* ---------------- Admin UI ---------------- */
 
   public function admin_menu() {
-    add_options_page(
+    add_menu_page(
       'GNN Terms Popup',
       'GNN Terms Popup',
       'manage_options',
       'gnn-terms-popup',
-      [$this, 'settings_page']
+      [$this, 'settings_page'],
+      'dashicons-shield',
+      80
     );
   }
 
   public function plugin_action_links($links) {
     $donate_link = '<a href="https://buymeacoffee.com/bigdesigner" target="_blank" style="font-weight:bold; color:#d63638;">' . esc_html__('Donate', 'gnn-terms-popup') . '</a>';
-    $settings_link = '<a href="' . admin_url('options-general.php?page=gnn-terms-popup') . '">' . esc_html__('Settings', 'gnn-terms-popup') . '</a>';
+    $settings_link = '<a href="' . admin_url('admin.php?page=gnn-terms-popup') . '">' . esc_html__('Settings', 'gnn-terms-popup') . '</a>';
     $update_url = wp_nonce_url(admin_url('plugins.php?gnn_terms_check_update=1'), 'gnn_terms_manual_update');
     $update_link = '<a href="' . esc_url($update_url) . '">' . esc_html__('Check Updates', 'gnn-terms-popup') . '</a>';
 
@@ -352,7 +354,7 @@ class GNN_Terms_Popup {
 
   public function enqueue_admin_editor_assets($hook) {
     // Only on our settings page
-    if ($hook !== 'settings_page_gnn-terms-popup') return;
+    if ($hook !== 'toplevel_page_gnn-terms-popup') return;
 
     if (function_exists('wp_enqueue_editor')) {
       wp_enqueue_editor(); // loads TinyMCE/QuickTags and dependencies

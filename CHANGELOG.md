@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.7] - 2026-06-26
+### Added
+- **Sidebar Admin Menu:** Relocated the plugin settings page from the default "Settings" submenu to a top-level menu page in the main WordPress admin sidebar using a custom shield icon (`dashicons-shield`).
+
 ## [1.3.6] - 2026-06-26
 ### Changed
 - **Security Hardening (Defense in Depth):** Added native escaping functions (`esc_html__`, `esc_html`, `esc_attr`, `esc_html_e`, `esc_attr_e`) across settings forms and rendering functions to prevent translation-based XSS exploits.

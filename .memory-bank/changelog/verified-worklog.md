@@ -4,6 +4,11 @@ This document tracks all completed work, release history, and recent updates for
 
 ## 🚀 Release History & Changelogs
 
+### [1.3.7] - 2026-06-26
+- **Sidebar Admin Menu:**
+  - Relocated the plugin settings page from the options submenu to a top-level menu page in the main admin sidebar.
+  - Custom brand shield icon (`dashicons-shield`) added for visual alignment.
+
 ### [1.3.6] - 2026-06-26
 - **Security & UX Hardening:**
   - Added native escaping functions (`esc_html__`, `esc_html`, `esc_attr`, `esc_html_e`, `esc_attr_e`) across settings forms and description blocks to harden output security.
