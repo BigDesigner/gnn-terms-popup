@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.8] - 2026-06-26
+### Fixed
+- **CSS/JS Load Stability:** Consolidated CSS styling and Javascript logic blocks directly inline inside `render_modal` within the footer output. This resolves modal visibility bugs and load errors on production sites utilizing CSS/JS minification or caching optimization plugins (e.g. WP Rocket, LiteSpeed Cache).
+
 ## [1.3.7] - 2026-06-26
 ### Added
 - **Sidebar Admin Menu:** Relocated the plugin settings page from the default "Settings" submenu to a top-level menu page in the main WordPress admin sidebar using a custom shield icon (`dashicons-shield`).

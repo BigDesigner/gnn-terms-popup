@@ -4,6 +4,11 @@ This document tracks all completed work, release history, and recent updates for
 
 ## 🚀 Release History & Changelogs
 
+### [1.3.8] - 2026-06-26
+- **CSS/JS Load Stability:**
+  - Consolidated CSS styling and Javascript logic blocks directly inline inside `render_modal` within the footer output.
+  - Resolved modal rendering and styling issues caused by asset minification/caching optimization plugins.
+
 ### [1.3.7] - 2026-06-26
 - **Sidebar Admin Menu:**
   - Relocated the plugin settings page from the options submenu to a top-level menu page in the main admin sidebar.

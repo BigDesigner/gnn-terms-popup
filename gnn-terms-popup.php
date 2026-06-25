@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GNN Terms Popup
  * Description: One-time Terms acceptance popup with admin settings and inline expanding Legal text (no redirect).
- * Version: 1.3.7
+ * Version: 1.3.8
  * Author: BigDesigner
  * Author URI: https://github.com/BigDesigner
  * License: GPLv2 or later
@@ -29,7 +29,6 @@ class GNN_Terms_Popup {
     // Admin editor assets fix for Visual <-> Text toggle
     add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_editor_assets']);
 
-    add_action('wp_enqueue_scripts', [$this, 'enqueue_front']);
     add_action('wp_footer',          [$this, 'render_modal']);
 
     // Add plugin action links
@@ -373,74 +372,138 @@ class GNN_Terms_Popup {
     wp_add_inline_script('gnn-admin-js', "jQuery(document).ready(function($){ $('.gnn-color-picker').wpColorPicker(); });");
   }
 
-  /* ---------------- Frontend ---------------- */
+  private function should_skip($o) {
+    // skip if cookie set
+    if (isset($_COOKIE[self::COOKIE]) && $_COOKIE[self::COOKIE] === 'yes') return true;
 
-  public function enqueue_front() {
+    // skip for admins if opted
+    if (!empty($o['skip_admins']) && current_user_can('manage_options')) return true;
+
+    // otherwise enqueue and decide on client side for scope
+    return false;
+  }
+
+  /* ---------------- Render ---------------- */
+
+  private function get_legal_html($o) {
+    // Prefer 'page' source if selected and page exists, otherwise fall back to 'custom'.
+    $allowed = wp_kses_allowed_html('post');
+
+    $source = $o['legal_source'] ?? 'page';
+    if ($source === 'page') {
+      $slug = $o['legal_page_slug'] ?? 'legal';
+      $page = $slug ? get_page_by_path($slug) : null;
+
+      if ($page instanceof WP_Post) {
+        $html = apply_filters('the_content', $page->post_content);
+        if (trim(wp_strip_all_tags($html)) !== '') {
+          return $html; // page content OK
+        }
+        // page boşsa custom'a düş
+      }
+
+      // Fallback: custom
+      $custom = isset($o['full_legal']) ? wp_kses($o['full_legal'], $allowed) : '';
+      if (trim(wp_strip_all_tags($custom)) !== '') {
+        return wpautop($custom);
+      }
+
+      // Son çare: bilgilendir
+      return '<p class="gnn-small">Legal page not found for slug: <code>' . esc_html($slug) . '</code> and no custom legal text provided.</p>';
+    }
+
+    // Source = custom
+    $custom = isset($o['full_legal']) ? wp_kses($o['full_legal'], $allowed) : '';
+    return wpautop($custom);
+  }
+
+  public function render_modal() {
     if (is_admin()) return;
 
     $o = get_option(self::OPT_KEY, $this->get_defaults());
     if ($this->should_skip($o)) return;
 
-    // CSS (brand colors only: #fdb813 and #000000), plus a11y and iOS smooth scroll
+    $title        = $o['title'] ?? '';
+    $intro_body   = wpautop($o['intro_body'] ?? '');
+    $accept_label = esc_html($o['accept_label'] ?? 'I Agree');
+    $read_label   = esc_html($o['read_label'] ?? 'Read Terms');
+
+    $legal_html   = $this->get_legal_html($o);
+
+    // CSS
     $primary   = $o['primary_color']   ?? '#fdb813';
     $secondary = $o['secondary_color'] ?? '#000000';
 
-    $css = "
-    :root {
-      --gnn-primary: {$primary};
-      --gnn-secondary: {$secondary};
-    }
-	.gnn-terms-overlay{
-	  position:fixed;inset:0;background:rgba(0,0,0,.5);
-	  display:none;align-items:center;justify-content:center;
-	  padding-top:0;
-	  z-index:99999
-	}
-    .gnn-terms-modal{
-      max-width:780px;width:92%;
-      background:var(--gnn-primary);color:var(--gnn-secondary);
-      border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.2);
-      padding:24px;max-height:90vh;overflow:auto;
-      -webkit-overflow-scrolling:touch;
-    }
-    .gnn-terms-modal h2{margin:0 0 8px 0;color:var(--gnn-secondary)}
-    .gnn-terms-modal p{margin:.4rem 0;color:var(--gnn-secondary)}
-    .gnn-terms-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
-    .gnn-btn{
-      display:inline-block;padding:10px 14px;border-radius:10px;
-      border:1px solid var(--gnn-secondary);background:var(--gnn-secondary);color:var(--gnn-primary);cursor:pointer
-    }
-    .gnn-btn.secondary{background:var(--gnn-primary);color:var(--gnn-secondary);border:1px solid var(--gnn-secondary)}
-    .gnn-small{font-size:13px;color:var(--gnn-secondary)}
-    body.gnn-no-scroll{overflow:hidden}
-    .gnn-terms-full{
-      display:none;max-height:0;overflow:hidden;transition:max-height .5s ease
-    }
-    @media (prefers-reduced-motion: reduce){
-      .gnn-terms-full{transition:none}
-    }
-    .gnn-terms-full.open{
-      display:block !important;max-height:80vh;overflow-y:auto;
-      margin-top:12px;padding-top:12px;border-top:1px solid var(--gnn-secondary);
-      -webkit-overflow-scrolling:touch;
-    }
-    ";
-    $handle = 'gnn-terms-popup';
-    $ver = $o['style_hash'] ?? '1.0';
-    wp_register_style($handle, false, [], $ver);
-    wp_enqueue_style($handle);
-    wp_add_inline_style($handle, $css);
-
-    // JS
+    // JS variables
     $cookie_name   = self::COOKIE;
     $days          = intval($o['cookie_days']);
     $skip_admins   = (!empty($o['skip_admins']) && current_user_can('manage_options')) ? 'true' : 'false';
     $showEverywhere= !empty($o['show_everywhere']) ? 'true' : 'false';
     $includePaths  = json_encode(array_map('trim', array_filter(explode(',', $o['include_paths'] ?? ''))));
+    ?>
+    <style>
+      :root {
+        --gnn-primary: <?php echo esc_html($primary); ?>;
+        --gnn-secondary: <?php echo esc_html($secondary); ?>;
+      }
+      .gnn-terms-overlay{
+        position:fixed;inset:0;background:rgba(0,0,0,.5);
+        display:none;align-items:center;justify-content:center;
+        padding-top:0;
+        z-index:99999
+      }
+      .gnn-terms-modal{
+        max-width:780px;width:92%;
+        background:var(--gnn-primary);color:var(--gnn-secondary);
+        border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.2);
+        padding:24px;max-height:90vh;overflow:auto;
+        -webkit-overflow-scrolling:touch;
+      }
+      .gnn-terms-modal h2{margin:0 0 8px 0;color:var(--gnn-secondary)}
+      .gnn-terms-modal p{margin:.4rem 0;color:var(--gnn-secondary)}
+      .gnn-terms-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+      .gnn-btn{
+        display:inline-block;padding:10px 14px;border-radius:10px;
+        border:1px solid var(--gnn-secondary);background:var(--gnn-secondary);color:var(--gnn-primary);cursor:pointer
+      }
+      .gnn-btn.secondary{background:var(--gnn-primary);color:var(--gnn-secondary);border:1px solid var(--gnn-secondary)}
+      .gnn-small{font-size:13px;color:var(--gnn-secondary)}
+      body.gnn-no-scroll{overflow:hidden}
+      .gnn-terms-full{
+        display:none;max-height:0;overflow:hidden;transition:max-height .5s ease
+      }
+      @media (prefers-reduced-motion: reduce){
+        .gnn-terms-full{transition:none}
+      }
+      .gnn-terms-full.open{
+        display:block !important;max-height:80vh;overflow-y:auto;
+        margin-top:12px;padding-top:12px;border-top:1px solid var(--gnn-secondary);
+        -webkit-overflow-scrolling:touch;
+      }
+    </style>
 
-    $js = "
+    <div class="gnn-terms-overlay" role="dialog" aria-modal="true" aria-labelledby="gnn-terms-title">
+      <div class="gnn-terms-modal">
+        <h2 id="gnn-terms-title"><?php echo esc_html($title); ?></h2>
+        <div class="gnn-body"><?php echo wp_kses_post($intro_body); ?></div>
+
+        <div class="gnn-terms-actions">
+          <button id="gnn-accept" class="gnn-btn" type="button" aria-label="<?php echo esc_attr($accept_label); ?>"><?php echo esc_html($accept_label); ?></button>
+          <button id="gnn-read" class="gnn-btn secondary" type="button" aria-expanded="false" aria-controls="gnn-terms-full"><?php echo esc_html($read_label); ?></button>
+        </div>
+
+        <div id="gnn-terms-full" class="gnn-terms-full" aria-hidden="true" tabindex="-1">
+          <?php echo wp_kses_post($legal_html); ?>
+        </div>
+
+        <p class="gnn-small"><?php esc_html_e('You must accept to continue using this site.', 'gnn-terms-popup'); ?></p>
+        <noscript><p><?php esc_html_e('Please enable JavaScript to proceed.', 'gnn-terms-popup'); ?></p></noscript>
+      </div>
+    </div>
+
+    <script>
     (function(){
-      if ($skip_admins) return;
+      if (<?php echo $skip_admins; ?>) return;
 
       function getCookie(name){
         return document.cookie.split('; ').find(r=>r.startsWith(name+'='))?.split('=')[1];
@@ -491,9 +554,9 @@ class GNN_Terms_Popup {
         document.body.classList.remove('gnn-no-scroll');
       }
 
-      var cookie = getCookie('$cookie_name');
-      var showEverywhere = $showEverywhere;
-      var include = $includePaths;
+      var cookie = getCookie('<?php echo esc_js($cookie_name); ?>');
+      var showEverywhere = <?php echo $showEverywhere; ?>;
+      var include = <?php echo $includePaths; ?>;
       if (!cookie) {
         if (showEverywhere || inList(include, pathNow())) {
           showModal();
@@ -502,116 +565,33 @@ class GNN_Terms_Popup {
 
       document.addEventListener('click', function(e){
         if(e.target && e.target.id==='gnn-accept'){
-          setCookie('$cookie_name', 'yes', $days);
+          setCookie('<?php echo esc_js($cookie_name); ?>', 'yes', <?php echo $days; ?>);
           hideModal();
         }
-		if(e.target && e.target.id==='gnn-read'){
-		  var btn  = e.target;
-		  var modal = document.querySelector('.gnn-terms-modal'); // 👈 modal referansı
-		  var full = document.getElementById('gnn-terms-full');
-		  if (full) {
-			if (!full.classList.contains('open')) {
-			  full.style.display='block';
-			  var _ = full.scrollHeight; // reflow
-			}
-			full.classList.toggle('open');
-			var isOpen = full.classList.contains('open');
-			full.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
-			btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        if(e.target && e.target.id==='gnn-read'){
+          var btn  = e.target;
+          var modal = document.querySelector('.gnn-terms-modal');
+          var full = document.getElementById('gnn-terms-full');
+          if (full) {
+            if (!full.classList.contains('open')) {
+              full.style.display='block';
+              var _ = full.scrollHeight; // reflow
+            }
+            full.classList.toggle('open');
+            var isOpen = full.classList.contains('open');
+            full.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+            btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
 
-			if (isOpen) {
-			  // önce legal bloğun, sonra modal'ın scroll'unu tepeye al
-			  full.scrollTop = 0;
-			  if (modal) modal.scrollTop = 0;
-			  try { full.focus({preventScroll:true}); } catch(e){}
-			  // scrollIntoView kullanmıyoruz; ortalama bozulmasın
-			}
-		  }
-		}
+            if (isOpen) {
+              full.scrollTop = 0;
+              if (modal) modal.scrollTop = 0;
+              try { full.focus({preventScroll:true}); } catch(e){}
+            }
+          }
+        }
       });
     })();
-    ";
-    wp_register_script('gnn-terms-popup', false, [], null, true);
-    wp_enqueue_script('gnn-terms-popup');
-    wp_add_inline_script('gnn-terms-popup', $js);
-  }
-
-  private function should_skip($o) {
-    // skip if cookie set
-    if (isset($_COOKIE[self::COOKIE]) && $_COOKIE[self::COOKIE] === 'yes') return true;
-
-    // skip for admins if opted
-    if (!empty($o['skip_admins']) && current_user_can('manage_options')) return true;
-
-    // otherwise enqueue and decide on client side for scope
-    return false;
-  }
-
-  /* ---------------- Render ---------------- */
-
-  private function get_legal_html($o) {
-    // Prefer 'page' source if selected and page exists, otherwise fall back to 'custom'.
-    $allowed = wp_kses_allowed_html('post');
-
-    $source = $o['legal_source'] ?? 'page';
-    if ($source === 'page') {
-      $slug = $o['legal_page_slug'] ?? 'legal';
-      $page = $slug ? get_page_by_path($slug) : null;
-
-      if ($page instanceof WP_Post) {
-        $html = apply_filters('the_content', $page->post_content);
-        if (trim(wp_strip_all_tags($html)) !== '') {
-          return $html; // page content OK
-        }
-        // page boşsa custom'a düş
-      }
-
-      // Fallback: custom
-      $custom = isset($o['full_legal']) ? wp_kses($o['full_legal'], $allowed) : '';
-      if (trim(wp_strip_all_tags($custom)) !== '') {
-        return wpautop($custom);
-      }
-
-      // Son çare: bilgilendir
-      return '<p class="gnn-small">Legal page not found for slug: <code>' . esc_html($slug) . '</code> and no custom legal text provided.</p>';
-    }
-
-    // Source = custom
-    $custom = isset($o['full_legal']) ? wp_kses($o['full_legal'], $allowed) : '';
-    return wpautop($custom);
-  }
-
-  public function render_modal() {
-    if (is_admin()) return;
-
-    $o = get_option(self::OPT_KEY, $this->get_defaults());
-    if (isset($_COOKIE[self::COOKIE]) && $_COOKIE[self::COOKIE] === 'yes') return;
-
-    $title        = $o['title'] ?? '';
-    $intro_body   = wpautop($o['intro_body'] ?? '');
-    $accept_label = esc_html($o['accept_label'] ?? 'I Agree');
-    $read_label   = esc_html($o['read_label'] ?? 'Read Terms');
-
-    $legal_html   = $this->get_legal_html($o);
-    ?>
-    <div class="gnn-terms-overlay" role="dialog" aria-modal="true" aria-labelledby="gnn-terms-title">
-      <div class="gnn-terms-modal">
-        <h2 id="gnn-terms-title"><?php echo esc_html($title); ?></h2>
-        <div class="gnn-body"><?php echo wp_kses_post($intro_body); ?></div>
-
-        <div class="gnn-terms-actions">
-          <button id="gnn-accept" class="gnn-btn" type="button" aria-label="<?php echo esc_attr($accept_label); ?>"><?php echo esc_html($accept_label); ?></button>
-          <button id="gnn-read" class="gnn-btn secondary" type="button" aria-expanded="false" aria-controls="gnn-terms-full"><?php echo esc_html($read_label); ?></button>
-        </div>
-
-        <div id="gnn-terms-full" class="gnn-terms-full" aria-hidden="true" tabindex="-1">
-          <?php echo wp_kses_post($legal_html); ?>
-        </div>
-
-        <p class="gnn-small"><?php esc_html_e('You must accept to continue using this site.', 'gnn-terms-popup'); ?></p>
-        <noscript><p><?php esc_html_e('Please enable JavaScript to proceed.', 'gnn-terms-popup'); ?></p></noscript>
-      </div>
-    </div>
+    </script>
     <?php
   }
 }
