@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GNN Terms Popup
  * Description: One-time Terms acceptance popup with admin settings and inline expanding Legal text (no redirect).
- * Version: 1.3.9
+ * Version: 1.3.10
  * Author: BigDesigner
  * Author URI: https://github.com/BigDesigner
  * License: GPLv2 or later
@@ -103,30 +103,30 @@ class GNN_Terms_Popup {
       echo '<p>' . esc_html__('Configure popup content, behavior, and legal source.', 'gnn-terms-popup') . '</p>';
     }, 'gnn-terms-popup');
 
-    add_settings_field('title', __('Title', 'gnn-terms-popup'), [$this, 'field_title'], 'gnn-terms-popup', 'gnn_main');
-    add_settings_field('intro_body', __('Intro Text (shown by default)', 'gnn-terms-popup'), [$this, 'field_intro_body'], 'gnn-terms-popup', 'gnn_main');
+    add_settings_field('title', esc_html__('Title', 'gnn-terms-popup'), [$this, 'field_title'], 'gnn-terms-popup', 'gnn_main');
+    add_settings_field('intro_body', esc_html__('Intro Text (shown by default)', 'gnn-terms-popup'), [$this, 'field_intro_body'], 'gnn-terms-popup', 'gnn_main');
 
-    add_settings_field('legal_source', __('Legal Content Source', 'gnn-terms-popup'), [$this, 'field_legal_source'], 'gnn-terms-popup', 'gnn_main');
-    add_settings_field('legal_page_slug', __('If Source = Page: Page Slug', 'gnn-terms-popup'), [$this, 'field_legal_slug'], 'gnn-terms-popup', 'gnn_main');
-    add_settings_field('full_legal', __('If Source = Custom: Full Legal Text', 'gnn-terms-popup'), [$this, 'field_full_legal'], 'gnn-terms-popup', 'gnn_main');
+    add_settings_field('legal_source', esc_html__('Legal Content Source', 'gnn-terms-popup'), [$this, 'field_legal_source'], 'gnn-terms-popup', 'gnn_main');
+    add_settings_field('legal_page_slug', esc_html__('If Source = Page: Page Slug', 'gnn-terms-popup'), [$this, 'field_legal_slug'], 'gnn-terms-popup', 'gnn_main');
+    add_settings_field('full_legal', esc_html__('If Source = Custom: Full Legal Text', 'gnn-terms-popup'), [$this, 'field_full_legal'], 'gnn-terms-popup', 'gnn_main');
 
-    add_settings_field('accept_label', __('Accept Button Label', 'gnn-terms-popup'), [$this, 'field_accept'], 'gnn-terms-popup', 'gnn_main');
-    add_settings_field('read_label', __('Read Terms Button Label', 'gnn-terms-popup'), [$this, 'field_read'], 'gnn-terms-popup', 'gnn_main');
-    add_settings_field('cookie_days', __('Cookie Lifetime (days)', 'gnn-terms-popup'), [$this, 'field_days'], 'gnn-terms-popup', 'gnn_main');
-    add_settings_field('skip_admins', __('Skip for Admins', 'gnn-terms-popup'), [$this, 'field_skip'], 'gnn-terms-popup', 'gnn_main');
+    add_settings_field('accept_label', esc_html__('Accept Button Label', 'gnn-terms-popup'), [$this, 'field_accept'], 'gnn-terms-popup', 'gnn_main');
+    add_settings_field('read_label', esc_html__('Read Terms Button Label', 'gnn-terms-popup'), [$this, 'field_read'], 'gnn-terms-popup', 'gnn_main');
+    add_settings_field('cookie_days', esc_html__('Cookie Lifetime (days)', 'gnn-terms-popup'), [$this, 'field_days'], 'gnn-terms-popup', 'gnn_main');
+    add_settings_field('skip_admins', esc_html__('Skip for Admins', 'gnn-terms-popup'), [$this, 'field_skip'], 'gnn-terms-popup', 'gnn_main');
 
     add_settings_section('gnn_scope', esc_html__('Display Scope', 'gnn-terms-popup'), function () {
       echo '<p>' . esc_html__('Where should the popup appear?', 'gnn-terms-popup') . '</p>';
     }, 'gnn-terms-popup');
 
-    add_settings_field('show_scope', __('Scope', 'gnn-terms-popup'), [$this, 'field_scope'], 'gnn-terms-popup', 'gnn_scope');
+    add_settings_field('show_scope', esc_html__('Scope', 'gnn-terms-popup'), [$this, 'field_scope'], 'gnn-terms-popup', 'gnn_scope');
 
     add_settings_section('gnn_style', esc_html__('Appearance', 'gnn-terms-popup'), function () {
       echo '<p>' . esc_html__('Customize colors to match your brand.', 'gnn-terms-popup') . '</p>';
     }, 'gnn-terms-popup');
 
-    add_settings_field('primary_color', __('Primary Color (Yellow)', 'gnn-terms-popup'), [$this, 'field_color_primary'], 'gnn-terms-popup', 'gnn_style');
-    add_settings_field('secondary_color', __('Secondary Color (Black)', 'gnn-terms-popup'), [$this, 'field_color_secondary'], 'gnn-terms-popup', 'gnn_style');
+    add_settings_field('primary_color', esc_html__('Primary Color (Yellow)', 'gnn-terms-popup'), [$this, 'field_color_primary'], 'gnn-terms-popup', 'gnn_style');
+    add_settings_field('secondary_color', esc_html__('Secondary Color (Black)', 'gnn-terms-popup'), [$this, 'field_color_secondary'], 'gnn-terms-popup', 'gnn_style');
   }
 
   public function sanitize($input) {
@@ -371,13 +371,14 @@ class GNN_Terms_Popup {
 
     // Color Picker
     wp_enqueue_style('wp-color-picker');
-    wp_enqueue_script('gnn-admin-js', false, ['wp-color-picker'], false, true);
+    wp_register_script('gnn-admin-js', '', ['wp-color-picker'], false, true);
+    wp_enqueue_script('gnn-admin-js');
     wp_add_inline_script('gnn-admin-js', "jQuery(document).ready(function($){ $('.gnn-color-picker').wpColorPicker(); });");
   }
 
   private function should_skip($o) {
     // skip if cookie set
-    if (isset($_COOKIE[self::COOKIE]) && $_COOKIE[self::COOKIE] === 'yes') return true;
+    if (isset($_COOKIE[self::COOKIE]) && sanitize_text_field(wp_unslash($_COOKIE[self::COOKIE])) === 'yes') return true;
 
     // skip for admins if opted
     if (!empty($o['skip_admins']) && current_user_can('manage_options')) return true;
@@ -440,8 +441,8 @@ class GNN_Terms_Popup {
     // JS variables
     $cookie_name   = self::COOKIE;
     $days          = intval($o['cookie_days']);
-    $skip_admins   = (!empty($o['skip_admins']) && current_user_can('manage_options')) ? 'true' : 'false';
-    $showEverywhere= !empty($o['show_everywhere']) ? 'true' : 'false';
+    $skip_admins   = json_encode(!empty($o['skip_admins']) && current_user_can('manage_options'));
+    $showEverywhere= json_encode(!empty($o['show_everywhere']));
     $includePaths  = json_encode(array_map('trim', array_filter(explode(',', $o['include_paths'] ?? ''))));
     ?>
     <style>

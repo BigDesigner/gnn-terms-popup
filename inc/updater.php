@@ -68,6 +68,9 @@ class GNN_Terms_Popup_Updater
     {
         $cached = get_transient($this->transient_key);
         if (false !== $cached) {
+            if (is_object($cached) && isset($cached->_failed) && $cached->_failed) {
+                return false;
+            }
             return $cached;
         }
 
@@ -83,7 +86,8 @@ class GNN_Terms_Popup_Updater
         $response = wp_remote_get($url, $args);
 
         if (is_wp_error($response) || 200 !== wp_remote_retrieve_response_code($response)) {
-            set_transient($this->transient_key, false, 300); // Cache failure for 5 mins
+            $sentinel = (object) array('_failed' => true);
+            set_transient($this->transient_key, $sentinel, 300); // Cache failure for 5 mins
             return false;
         }
 
@@ -208,7 +212,7 @@ class GNN_Terms_Popup_Updater
      */
     public function handle_manual_check()
     {
-        if (isset($_GET['gnn_terms_check_update']) && '1' === $_GET['gnn_terms_check_update']) {
+        if (isset($_GET['gnn_terms_check_update']) && '1' === sanitize_text_field(wp_unslash($_GET['gnn_terms_check_update']))) {
             if (!isset($_GET['_wpnonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'gnn_terms_manual_update')) {
                 wp_die(esc_html__('Security check failed.', 'gnn-terms-popup'));
             }

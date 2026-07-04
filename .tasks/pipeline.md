@@ -3,7 +3,7 @@
 This document maps out the current project state, active sprint goals, immediate actions, and the feature backlog.
 
 ## 1. Project State & Release Readiness
-* **Current Stable Version:** `1.3.9`
+* **Current Stable Version:** `1.3.10`
 * **Release Readiness:** Production-ready packaging is handled via GitHub Actions. A clean git state must be achieved before releasing.
 
 ## 2. Active Sprint (v1.4.0)
@@ -13,7 +13,7 @@ The goal of this sprint is to finalize output escaping, implement translation ho
 * [ ] **SEC-REVIEW:** Verify sanitization of the "Custom Legal Text" editor output.
 
 ## 3. Immediate Next Actions
-1. Stage and commit the 1.3.6 escaping and localization updates.
+1. Deploy v1.3.10 to staging/test site for environment verification.
 2. Begin designing the scroll-to-bottom activation listener in the frontend JS block.
 
 ## 4. Backlog
