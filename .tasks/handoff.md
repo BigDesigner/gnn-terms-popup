@@ -13,6 +13,7 @@
   * Standardized `gnn-admin-js` enqueue pattern using `wp_register_script()` and `wp_enqueue_script()` (QA-01).
   * Consistently escaped title arguments in `add_settings_field` options fields (QA-02).
   * Handled GitHub release api lookup failures in updater with a sentinel object instead of caching boolean `false` (QA-04).
+  * Excluded dev dot-directories (`.memory-bank`, `.agents`, `.archive`, `.specs`, `.tasks`) from release zip building in `release.yml`.
 * Upgraded version across code & docs to `v1.3.10`.
 * Updated project memory bank (`bug-list.md`, `active-session.json`, `verified-worklog.md`).
 

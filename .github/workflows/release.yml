@@ -42,7 +42,12 @@ jobs:
           rsync -av --exclude='build' \
                     --exclude='.git' \
                     --exclude='.github' \
+                    --exclude='.memory-bank' \
                     --exclude='memory-bank' \
+                    --exclude='.agents' \
+                    --exclude='.archive' \
+                    --exclude='.specs' \
+                    --exclude='.tasks' \
                     --exclude='.gitignore' \
                     --exclude='*.md' \
                     ./ build/gnn-terms-popup/

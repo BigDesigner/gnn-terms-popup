@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **Security Hardening:** Standardized JS variable injections using `json_encode()` (SEC-01, SEC-02), sanitized `$_COOKIE` and `$_GET` values prior to evaluation (SEC-03, SEC-04), and resolved translation escaping checks (QA-02).
 - **Code Quality:** Enqueued `gnn-admin-js` using standard WordPress `wp_register_script()` / `wp_enqueue_script()` pattern (QA-01) and resolved cache-miss vs cache-failure ambiguities in GitHub updater class (QA-04).
+- **Release Packaging:** Excluded the new dot directories (`.memory-bank`, `.agents`, `.archive`, `.specs`, `.tasks`) from the production build ZIP in the GitHub Actions release workflow.
 
 ## [1.3.9] - 2026-06-26
 ### Fixed

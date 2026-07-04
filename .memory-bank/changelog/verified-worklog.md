@@ -5,12 +5,13 @@ This document tracks all completed work, release history, and recent updates for
 ## 🚀 Release History & Changelogs
 
 ### [1.3.10] - 2026-07-04
-- **Security Audit Fixes:**
+- **Security Audit & Packaging Fixes:**
   - Standardized Javascript variable injections using `json_encode()` to prevent output-context issues (SEC-01, SEC-02).
   - Sanitized `$_COOKIE` and `$_GET` inputs before verification checks (SEC-03, SEC-04).
   - Corrected script registration pattern for `gnn-admin-js` using standard `wp_register_script()` and `wp_enqueue_script()` calls (QA-01).
   - Fixed translations to use escaping functions (`esc_html__`) consistently (QA-02).
   - Implemented transient caching sentinel object for remote release fetch failures in updater (QA-04).
+  - Excluded development dot directories (`.memory-bank`, `.agents`, `.archive`, `.specs`, `.tasks`) from release zip packaging in GitHub Actions.
 
 ### [1.3.9] - 2026-06-26
 - **Security Hardening:**
