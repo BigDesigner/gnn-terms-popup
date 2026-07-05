@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **Security Hardening:** Escaped settings page links with `esc_url()` (AUD-001) and wrapped dynamic page post contents in `wp_kses_post()` under `render_modal` (AUD-003).
 - **Code Quality:** Added default color fallback metrics for `sanitize_hex_color()` in settings validation (AUD-002), enqueued translations for option field details (AUD-004, AUD-005, AUD-006), enqueued transient sentinel cache protection for invalid tag name responses in GitHub API updater (AUD-007), and added validation checks for global `$wp_filesystem` instance (AUD-008).
+- **Documentation & Compliance:** Rewrote and stylized `README.md` to reflect the sidebar menu location and cookie specifications. Added official GNU GPLv2 `LICENSE` file for compliance.
 
 ## [1.3.10] - 2026-07-04
 ### Fixed

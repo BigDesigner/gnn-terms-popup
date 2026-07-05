@@ -13,6 +13,9 @@ This document tracks all completed work, release history, and recent updates for
 - **Code Quality:**
   - Added default color fallback metrics for `sanitize_hex_color()` in settings validation (AUD-002).
   - Enqueued translation strings for option field details (AUD-004, AUD-005, AUD-006).
+- **Documentation & Compliance:**
+  - Rewrote and stylized `README.md` to correct administrative settings paths and document cookie specifications.
+  - Added official GNU GPLv2 `LICENSE` file to the root directory for licensing compliance.
 
 ### [1.3.10] - 2026-07-04
 - **Security Audit & Packaging Fixes:**
