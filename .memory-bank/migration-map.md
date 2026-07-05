@@ -2,6 +2,9 @@
 
 This document tracks the mapping and status of all legacy documentation files migrated to the new project memory bank structure.
 
+> [!NOTE]
+> The legacy archive files (previously located under `.archive/docs-migration/2026-06-26/`) have been permanently removed from the repository as of 2026-07-05.
+
 | Original Path | New Path | Archive Path | Action | Notes |
 |---|---|---|---|---|
 | `memory-bank/agents.md` | `.specs/constitution.md` | `.archive/docs-migration/2026-06-26/agents.md` | Migrated/Archived | Integrated agent roles and communication rules. |

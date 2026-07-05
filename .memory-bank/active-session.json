@@ -26,7 +26,6 @@
     "changelog": ".memory-bank/changelog/",
     "audits": ".memory-bank/audits/",
     "bugs": ".memory-bank/bugs/",
-    "tasks": ".tasks/",
-    "archive": ".archive/docs-migration/"
+    "tasks": ".tasks/"
   }
 }
