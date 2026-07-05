@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.11] - 2026-07-05
+### Fixed
+- **Security Hardening:** Escaped settings page links with `esc_url()` (AUD-001) and wrapped dynamic page post contents in `wp_kses_post()` under `render_modal` (AUD-003).
+- **Code Quality:** Added default color fallback metrics for `sanitize_hex_color()` in settings validation (AUD-002), enqueued translations for option field details (AUD-004, AUD-005, AUD-006), enqueued transient sentinel cache protection for invalid tag name responses in GitHub API updater (AUD-007), and added validation checks for global `$wp_filesystem` instance (AUD-008).
+
 ## [1.3.10] - 2026-07-04
 ### Fixed
 - **Security Hardening:** Standardized JS variable injections using `json_encode()` (SEC-01, SEC-02), sanitized `$_COOKIE` and `$_GET` values prior to evaluation (SEC-03, SEC-04), and resolved translation escaping checks (QA-02).

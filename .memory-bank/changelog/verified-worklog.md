@@ -4,6 +4,16 @@ This document tracks all completed work, release history, and recent updates for
 
 ## 🚀 Release History & Changelogs
 
+### [1.3.11] - 2026-07-05
+- **Security Audit Resolution:**
+  - Resolved settings page links output escaping with `esc_url()` (AUD-001).
+  - Wrapped dynamic page post contents in `wp_kses_post()` under `render_modal` to secure output (AUD-003).
+  - Implemented transient sentinel cache protection for invalid tag responses in GitHub API updater (AUD-007).
+  - Resolved validation checks for global `$wp_filesystem` instance (AUD-008).
+- **Code Quality:**
+  - Added default color fallback metrics for `sanitize_hex_color()` in settings validation (AUD-002).
+  - Enqueued translation strings for option field details (AUD-004, AUD-005, AUD-006).
+
 ### [1.3.10] - 2026-07-04
 - **Security Audit & Packaging Fixes:**
   - Standardized Javascript variable injections using `json_encode()` to prevent output-context issues (SEC-01, SEC-02).

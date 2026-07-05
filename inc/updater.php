@@ -94,6 +94,8 @@ class GNN_Terms_Popup_Updater
         $body = json_decode(wp_remote_retrieve_body($response));
 
         if (empty($body) || !isset($body->tag_name)) {
+            $sentinel = (object) array('_failed' => true);
+            set_transient($this->transient_key, $sentinel, 300); // Cache failure for 5 mins
             return false;
         }
 
@@ -193,6 +195,13 @@ class GNN_Terms_Popup_Updater
         }
 
         global $wp_filesystem;
+        if (empty($wp_filesystem)) {
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+            WP_Filesystem();
+        }
+        if (empty($wp_filesystem)) {
+            return $result;
+        }
         
         // Use the actual folder name where the plugin is located
         $plugin_dir = WP_PLUGIN_DIR . '/' . dirname($this->plugin_slug);

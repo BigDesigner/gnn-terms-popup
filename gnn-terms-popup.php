@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GNN Terms Popup
  * Description: One-time Terms acceptance popup with admin settings and inline expanding Legal text (no redirect).
- * Version: 1.3.10
+ * Version: 1.3.11
  * Author: BigDesigner
  * Author URI: https://github.com/BigDesigner
  * License: GPLv2 or later
@@ -81,7 +81,7 @@ class GNN_Terms_Popup {
 
   public function plugin_action_links($links) {
     $donate_link = '<a href="https://buymeacoffee.com/bigdesigner" target="_blank" style="font-weight:bold; color:#d63638;">' . esc_html__('Donate', 'gnn-terms-popup') . '</a>';
-    $settings_link = '<a href="' . admin_url('admin.php?page=gnn-terms-popup') . '">' . esc_html__('Settings', 'gnn-terms-popup') . '</a>';
+    $settings_link = '<a href="' . esc_url(admin_url('admin.php?page=gnn-terms-popup')) . '">' . esc_html__('Settings', 'gnn-terms-popup') . '</a>';
     $update_url = wp_nonce_url(admin_url('plugins.php?gnn_terms_check_update=1'), 'gnn_terms_manual_update');
     $update_link = '<a href="' . esc_url($update_url) . '">' . esc_html__('Check Updates', 'gnn-terms-popup') . '</a>';
 
@@ -174,8 +174,8 @@ class GNN_Terms_Popup {
     }
     $out['include_paths'] = $inc;
 
-    $out['primary_color']   = isset($input['primary_color']) ? sanitize_hex_color($input['primary_color']) : $d['primary_color'];
-    $out['secondary_color'] = isset($input['secondary_color']) ? sanitize_hex_color($input['secondary_color']) : $d['secondary_color'];
+    $out['primary_color']   = isset($input['primary_color']) ? (sanitize_hex_color($input['primary_color']) ?? $d['primary_color']) : $d['primary_color'];
+    $out['secondary_color'] = isset($input['secondary_color']) ? (sanitize_hex_color($input['secondary_color']) ?? $d['secondary_color']) : $d['secondary_color'];
     $out['style_hash']      = time(); // update hash on save
 
     return $out;
@@ -241,7 +241,7 @@ class GNN_Terms_Popup {
       'teeny'         => true,
       'quicktags'     => true, // allow Visual/Text toggle
     ]);
-    echo '<p class="description">Shown by default in the popup above the buttons.</p>';
+    echo '<p class="description">' . esc_html__('Shown by default in the popup above the buttons.', 'gnn-terms-popup') . '</p>';
   }
 
   public function field_legal_source() {
@@ -262,7 +262,7 @@ class GNN_Terms_Popup {
       esc_attr(self::OPT_KEY),
       esc_attr($o['legal_page_slug'] ?? 'legal')
     );
-    echo '<p class="description">Enter the slug of your Legal page (e.g., <code>legal</code>).</p>';
+    echo '<p class="description">' . sprintf(esc_html__('Enter the slug of your Legal page (e.g., %s).', 'gnn-terms-popup'), '<code>legal</code>') . '</p>';
   }
 
   public function field_full_legal() {
@@ -275,7 +275,7 @@ class GNN_Terms_Popup {
       'teeny'         => false,
       'quicktags'     => true,
     ]);
-    echo '<p class="description">This is used if <strong>Legal Content Source</strong> is set to <code>Custom</code>.</p>';
+    echo '<p class="description">' . sprintf(esc_html__('This is used if %s is set to %s.', 'gnn-terms-popup'), '<strong>' . esc_html__('Legal Content Source', 'gnn-terms-popup') . '</strong>', '<code>Custom</code>') . '</p>';
   }
 
   public function field_accept() {
@@ -299,7 +299,7 @@ class GNN_Terms_Popup {
   public function field_days() {
     $o = get_option(self::OPT_KEY, $this->get_defaults());
     printf(
-      '<input type="number" min="1" max="3650" name="%s[cookie_days]" value="%d" class="small-text"> days',
+      '<input type="number" min="1" max="3650" name="%s[cookie_days]" value="%d" class="small-text"> ' . esc_html__('days', 'gnn-terms-popup'),
       esc_attr(self::OPT_KEY),
       intval($o['cookie_days'] ?? 365)
     );
@@ -399,7 +399,7 @@ class GNN_Terms_Popup {
       $page = $slug ? get_page_by_path($slug) : null;
 
       if ($page instanceof WP_Post) {
-        $html = apply_filters('the_content', $page->post_content);
+        $html = wp_kses_post(apply_filters('the_content', $page->post_content));
         if (trim(wp_strip_all_tags($html)) !== '') {
           return $html; // page content OK
         }
