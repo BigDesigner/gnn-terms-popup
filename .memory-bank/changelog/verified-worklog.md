@@ -4,6 +4,10 @@ This document tracks all completed work, release history, and recent updates for
 
 ## 🚀 Release History & Changelogs
 
+### [1.3.12] - 2026-08-02
+- **Menu Alignment:**
+  - Standardized the admin settings page position to `'79.105'` (quoted string literal) to align with GNN Product Family position registry guidelines.
+
 ### [1.3.11] - 2026-07-05
 - **Security Audit Resolution:**
   - Resolved settings page links output escaping with `esc_url()` (AUD-001).

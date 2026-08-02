@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.12] - 2026-08-02
+### Changed
+- **Menu Alignment:** Registered the admin settings menu at position `'79.105'` to align with the GNN Product Family position registry guidelines.
+
 ## [1.3.11] - 2026-07-05
 ### Fixed
 - **Security Hardening:** Escaped settings page links with `esc_url()` (AUD-001) and wrapped dynamic page post contents in `wp_kses_post()` under `render_modal` (AUD-003).
