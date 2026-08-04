@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GNN Terms Popup
  * Description: One-time Terms acceptance popup with admin settings and inline expanding Legal text (no redirect).
- * Version: 1.3.12
+ * Version: 1.3.13
  * Author: BigDesigner
  * Author URI: https://github.com/BigDesigner
  * License: GPLv2 or later
@@ -39,6 +39,7 @@ class GNN_Terms_Popup {
 
   public function get_defaults() {
     return [
+      'enabled'          => 1,   // master on/off switch for the popup
       'title'            => __('Terms & Conditions', 'gnn-terms-popup'),
       'intro_body'       => __("Please Review Our Terms of Service. By clicking 'I Agree' or continuing to use this site, you acknowledge that you have read, understood, and agree to be bound by the Terms and Conditions and our Privacy Policy. This agreement governs your use of [Your Website/Company] services. If you do not accept these terms, please discontinue use of this Site.", 'gnn-terms-popup'),
       'accept_label'     => __('I Agree', 'gnn-terms-popup'),
@@ -99,32 +100,28 @@ class GNN_Terms_Popup {
   public function register_settings() {
     register_setting(self::OPT_KEY, self::OPT_KEY, [$this, 'sanitize']);
 
-    add_settings_section('gnn_main', esc_html__('Modal Content', 'gnn-terms-popup'), function () {
-      echo '<p>' . esc_html__('Configure popup content, behavior, and legal source.', 'gnn-terms-popup') . '</p>';
-    }, 'gnn-terms-popup');
+    // General tab
+    add_settings_section('gnn_general', '', '__return_false', 'gnn-terms-popup');
+    add_settings_field('enabled', esc_html__('Popup Enabled', 'gnn-terms-popup'), [$this, 'field_enabled'], 'gnn-terms-popup', 'gnn_general');
+    add_settings_field('title', esc_html__('Title', 'gnn-terms-popup'), [$this, 'field_title'], 'gnn-terms-popup', 'gnn_general');
+    add_settings_field('intro_body', esc_html__('Intro Text (shown by default)', 'gnn-terms-popup'), [$this, 'field_intro_body'], 'gnn-terms-popup', 'gnn_general');
+    add_settings_field('accept_label', esc_html__('Accept Button Label', 'gnn-terms-popup'), [$this, 'field_accept'], 'gnn-terms-popup', 'gnn_general');
+    add_settings_field('read_label', esc_html__('Read Terms Button Label', 'gnn-terms-popup'), [$this, 'field_read'], 'gnn-terms-popup', 'gnn_general');
+    add_settings_field('cookie_days', esc_html__('Cookie Lifetime (days)', 'gnn-terms-popup'), [$this, 'field_days'], 'gnn-terms-popup', 'gnn_general');
+    add_settings_field('skip_admins', esc_html__('Skip for Admins', 'gnn-terms-popup'), [$this, 'field_skip'], 'gnn-terms-popup', 'gnn_general');
 
-    add_settings_field('title', esc_html__('Title', 'gnn-terms-popup'), [$this, 'field_title'], 'gnn-terms-popup', 'gnn_main');
-    add_settings_field('intro_body', esc_html__('Intro Text (shown by default)', 'gnn-terms-popup'), [$this, 'field_intro_body'], 'gnn-terms-popup', 'gnn_main');
+    // Legal tab
+    add_settings_section('gnn_legal', '', '__return_false', 'gnn-terms-popup');
+    add_settings_field('legal_source', esc_html__('Legal Content Source', 'gnn-terms-popup'), [$this, 'field_legal_source'], 'gnn-terms-popup', 'gnn_legal');
+    add_settings_field('legal_page_slug', esc_html__('If Source = Page: Page Slug', 'gnn-terms-popup'), [$this, 'field_legal_slug'], 'gnn-terms-popup', 'gnn_legal');
+    add_settings_field('full_legal', esc_html__('If Source = Custom: Full Legal Text', 'gnn-terms-popup'), [$this, 'field_full_legal'], 'gnn-terms-popup', 'gnn_legal');
 
-    add_settings_field('legal_source', esc_html__('Legal Content Source', 'gnn-terms-popup'), [$this, 'field_legal_source'], 'gnn-terms-popup', 'gnn_main');
-    add_settings_field('legal_page_slug', esc_html__('If Source = Page: Page Slug', 'gnn-terms-popup'), [$this, 'field_legal_slug'], 'gnn-terms-popup', 'gnn_main');
-    add_settings_field('full_legal', esc_html__('If Source = Custom: Full Legal Text', 'gnn-terms-popup'), [$this, 'field_full_legal'], 'gnn-terms-popup', 'gnn_main');
-
-    add_settings_field('accept_label', esc_html__('Accept Button Label', 'gnn-terms-popup'), [$this, 'field_accept'], 'gnn-terms-popup', 'gnn_main');
-    add_settings_field('read_label', esc_html__('Read Terms Button Label', 'gnn-terms-popup'), [$this, 'field_read'], 'gnn-terms-popup', 'gnn_main');
-    add_settings_field('cookie_days', esc_html__('Cookie Lifetime (days)', 'gnn-terms-popup'), [$this, 'field_days'], 'gnn-terms-popup', 'gnn_main');
-    add_settings_field('skip_admins', esc_html__('Skip for Admins', 'gnn-terms-popup'), [$this, 'field_skip'], 'gnn-terms-popup', 'gnn_main');
-
-    add_settings_section('gnn_scope', esc_html__('Display Scope', 'gnn-terms-popup'), function () {
-      echo '<p>' . esc_html__('Where should the popup appear?', 'gnn-terms-popup') . '</p>';
-    }, 'gnn-terms-popup');
-
+    // Scope tab
+    add_settings_section('gnn_scope', '', '__return_false', 'gnn-terms-popup');
     add_settings_field('show_scope', esc_html__('Scope', 'gnn-terms-popup'), [$this, 'field_scope'], 'gnn-terms-popup', 'gnn_scope');
 
-    add_settings_section('gnn_style', esc_html__('Appearance', 'gnn-terms-popup'), function () {
-      echo '<p>' . esc_html__('Customize colors to match your brand.', 'gnn-terms-popup') . '</p>';
-    }, 'gnn-terms-popup');
-
+    // Appearance tab
+    add_settings_section('gnn_style', '', '__return_false', 'gnn-terms-popup');
     add_settings_field('primary_color', esc_html__('Primary Color (Yellow)', 'gnn-terms-popup'), [$this, 'field_color_primary'], 'gnn-terms-popup', 'gnn_style');
     add_settings_field('secondary_color', esc_html__('Secondary Color (Black)', 'gnn-terms-popup'), [$this, 'field_color_secondary'], 'gnn-terms-popup', 'gnn_style');
   }
@@ -135,6 +132,8 @@ class GNN_Terms_Popup {
     }
     $d = $this->get_defaults();
     $out = [];
+
+    $out['enabled']      = !empty($input['enabled']) ? 1 : 0;
 
     $out['title']        = isset($input['title']) ? wp_kses_post($input['title']) : $d['title'];
 
@@ -183,40 +182,133 @@ class GNN_Terms_Popup {
 
   public function settings_page() {
     if (!current_user_can('manage_options')) return;
-    ?>
-    <div class="wrap">
-      <h1>GNN Terms Popup</h1>
-      <form method="post" action="options.php">
-        <?php
-          settings_fields(self::OPT_KEY);
-          do_settings_sections('gnn-terms-popup');
-          submit_button('Save Changes');
-        ?>
-      </form>
-      <hr>
-      <p><strong>Tips:</strong> If <em>Legal Content Source</em> = <code>Page</code>, the plugin will load the content of the page with that slug and show it inline inside the popup when the user clicks “Read Terms”. If you prefer to manage it directly here, select <code>Custom</code> and paste your full Legal text.</p>
 
-      <hr>
-      <div class="gnn-ipinfo-status-card" style="background:#fff; padding:20px; border:1px solid #ccd0d4; border-radius:4px; max-width:400px;">
-          <h2><?php esc_html_e('GNN System Info', 'gnn-terms-popup'); ?></h2>
-          <div class="gnn-ipinfo-status-item" style="margin-bottom:10px;">
-              <span class="gnn-ipinfo-status-label" style="font-weight:bold;"><?php esc_html_e('Plugin Version:', 'gnn-terms-popup'); ?></span>
-              <span class="gnn-ipinfo-status-value">
-                  <?php 
-                  if (!function_exists('get_plugin_data')) {
-                      require_once(ABSPATH . 'wp-admin/includes/plugin.php');
-                  }
-                  $plugin_data = get_plugin_data(__FILE__);
-                  echo esc_html($plugin_data['Version']); 
-                  ?>
-              </span>
-          </div>
-          <div class="gnn-ipinfo-status-item">
-              <span class="gnn-ipinfo-status-label" style="font-weight:bold;"><?php esc_html_e('GitHub Repository:', 'gnn-terms-popup'); ?></span>
-              <span class="gnn-ipinfo-status-value">BigDesigner/gnn-terms-popup</span>
-          </div>
+    if (!function_exists('get_plugin_data')) {
+      require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+    }
+    $plugin_data = get_plugin_data(__FILE__);
+
+    $tabs = [
+      'general' => esc_html__('General', 'gnn-terms-popup'),
+      'legal'   => esc_html__('Legal Content', 'gnn-terms-popup'),
+      'scope'   => esc_html__('Display Scope', 'gnn-terms-popup'),
+      'style'   => esc_html__('Appearance', 'gnn-terms-popup'),
+      'system'  => esc_html__('System Info', 'gnn-terms-popup'),
+    ];
+    ?>
+    <div class="wrap gnn-admin-wrap">
+      <h1><?php esc_html_e('GNN Terms Popup', 'gnn-terms-popup'); ?></h1>
+
+      <div class="gnn-tabs-nav" role="tablist">
+        <?php foreach ($tabs as $key => $label) : ?>
+          <button type="button" class="gnn-tab-btn" data-tab="<?php echo esc_attr($key); ?>" role="tab"><?php echo $label; ?></button>
+        <?php endforeach; ?>
       </div>
+
+      <form method="post" action="options.php">
+        <?php settings_fields(self::OPT_KEY); ?>
+
+        <div class="gnn-tab-panel" data-panel="general">
+          <div class="gnn-card">
+            <?php do_settings_fields('gnn-terms-popup', 'gnn_general'); ?>
+          </div>
+        </div>
+
+        <div class="gnn-tab-panel" data-panel="legal">
+          <div class="gnn-card">
+            <p class="gnn-card-hint"><?php esc_html_e('If Legal Content Source = Page, the plugin loads the page with that slug and shows it inline when the user clicks "Read Terms". Choose Custom to manage the legal text directly here.', 'gnn-terms-popup'); ?></p>
+            <?php do_settings_fields('gnn-terms-popup', 'gnn_legal'); ?>
+          </div>
+        </div>
+
+        <div class="gnn-tab-panel" data-panel="scope">
+          <div class="gnn-card">
+            <?php do_settings_fields('gnn-terms-popup', 'gnn_scope'); ?>
+          </div>
+        </div>
+
+        <div class="gnn-tab-panel" data-panel="style">
+          <div class="gnn-card">
+            <?php do_settings_fields('gnn-terms-popup', 'gnn_style'); ?>
+          </div>
+        </div>
+
+        <div class="gnn-tab-panel" data-panel="system">
+          <div class="gnn-card">
+            <table class="form-table" role="presentation">
+              <tr>
+                <th scope="row"><?php esc_html_e('Plugin Version', 'gnn-terms-popup'); ?></th>
+                <td><?php echo esc_html($plugin_data['Version']); ?></td>
+              </tr>
+              <tr>
+                <th scope="row"><?php esc_html_e('GitHub Repository', 'gnn-terms-popup'); ?></th>
+                <td>BigDesigner/gnn-terms-popup</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <?php submit_button(esc_html__('Save Changes', 'gnn-terms-popup')); ?>
+      </form>
     </div>
+
+    <style>
+      .gnn-admin-wrap .gnn-tabs-nav{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0;border-bottom:1px solid #dcdcde;padding-bottom:0}
+      .gnn-admin-wrap .gnn-tab-btn{
+        background:#fff;border:1px solid #dcdcde;border-bottom:none;border-radius:8px 8px 0 0;
+        padding:10px 16px;font-weight:600;cursor:pointer;color:#50575e;
+      }
+      .gnn-admin-wrap .gnn-tab-btn:hover{color:#1d2327}
+      .gnn-admin-wrap .gnn-tab-btn.is-active{background:#2271b1;color:#fff;border-color:#2271b1}
+      .gnn-admin-wrap .gnn-tab-panel{display:none}
+      .gnn-admin-wrap .gnn-tab-panel.is-active{display:block}
+      .gnn-admin-wrap .gnn-card{
+        background:#fff;border:1px solid #dcdcde;border-radius:0 8px 8px 8px;
+        padding:20px 24px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;
+      }
+      .gnn-admin-wrap .gnn-card-hint{color:#50575e;margin-top:0}
+      .gnn-admin-wrap .gnn-card .form-table th{width:260px}
+
+      /* Toggle switch */
+      .gnn-switch{position:relative;display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+      .gnn-switch input{position:absolute;opacity:0;width:0;height:0}
+      .gnn-switch .gnn-switch-track{
+        width:42px;height:24px;border-radius:999px;background:#c3c4c7;
+        transition:background .15s ease;flex-shrink:0;position:relative;
+      }
+      .gnn-switch .gnn-switch-track::after{
+        content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;
+        border-radius:50%;background:#fff;transition:transform .15s ease;
+        box-shadow:0 1px 2px rgba(0,0,0,.3);
+      }
+      .gnn-switch input:checked + .gnn-switch-track{background:#2271b1}
+      .gnn-switch input:checked + .gnn-switch-track::after{transform:translateX(18px)}
+      .gnn-switch input:focus-visible + .gnn-switch-track{outline:2px solid #2271b1;outline-offset:2px}
+      .gnn-switch .gnn-switch-label{font-weight:600}
+    </style>
+
+    <script>
+    (function(){
+      var STORAGE_KEY = 'gnn_terms_popup_active_tab';
+      var btns = document.querySelectorAll('.gnn-tab-btn');
+      var panels = document.querySelectorAll('.gnn-tab-panel');
+
+      function activate(tab){
+        btns.forEach(function(b){ b.classList.toggle('is-active', b.dataset.tab === tab); });
+        panels.forEach(function(p){ p.classList.toggle('is-active', p.dataset.panel === tab); });
+        try { localStorage.setItem(STORAGE_KEY, tab); } catch(e){}
+      }
+
+      btns.forEach(function(b){
+        b.addEventListener('click', function(){ activate(b.dataset.tab); });
+      });
+
+      var saved = null;
+      try { saved = localStorage.getItem(STORAGE_KEY); } catch(e){}
+      var initial = (saved && document.querySelector('.gnn-tab-panel[data-panel="'+saved+'"]')) ? saved : 'general';
+      activate(initial);
+    })();
+    </script>
     <?php
   }
 
@@ -309,11 +401,23 @@ class GNN_Terms_Popup {
     $o = get_option(self::OPT_KEY, $this->get_defaults());
     $checked = !empty($o['skip_admins']) ? 'checked' : '';
     printf(
-      '<label><input type="checkbox" name="%s[skip_admins]" value="1" %s> %s</label>',
+      '<label class="gnn-switch"><input type="checkbox" name="%s[skip_admins]" value="1" %s><span class="gnn-switch-track"></span><span class="gnn-switch-label">%s</span></label>',
       esc_attr(self::OPT_KEY),
       esc_attr($checked),
       esc_html__('Do not show to administrators', 'gnn-terms-popup')
     );
+  }
+
+  public function field_enabled() {
+    $o = get_option(self::OPT_KEY, $this->get_defaults());
+    $checked = !empty($o['enabled']) ? 'checked' : '';
+    printf(
+      '<label class="gnn-switch"><input type="checkbox" name="%s[enabled]" value="1" %s><span class="gnn-switch-track"></span><span class="gnn-switch-label">%s</span></label>',
+      esc_attr(self::OPT_KEY),
+      esc_attr($checked),
+      esc_html__('Show the popup on the site', 'gnn-terms-popup')
+    );
+    echo '<p class="description">' . esc_html__('Turn off to disable the popup everywhere without deactivating the plugin.', 'gnn-terms-popup') . '</p>';
   }
 
   public function field_scope() {
@@ -425,6 +529,7 @@ class GNN_Terms_Popup {
     if (is_admin()) return;
 
     $o = get_option(self::OPT_KEY, $this->get_defaults());
+    if (empty($o['enabled'])) return;
     if ($this->should_skip($o)) return;
 
     $title        = $o['title'] ?? '';
