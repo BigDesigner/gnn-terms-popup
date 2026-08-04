@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GNN Terms Popup
  * Description: One-time Terms acceptance popup with admin settings and inline expanding Legal text (no redirect).
- * Version: 1.3.13
+ * Version: 1.3.14
  * Author: BigDesigner
  * Author URI: https://github.com/BigDesigner
  * License: GPLv2 or later
@@ -193,11 +193,11 @@ class GNN_Terms_Popup {
       'legal'   => esc_html__('Legal Content', 'gnn-terms-popup'),
       'scope'   => esc_html__('Display Scope', 'gnn-terms-popup'),
       'style'   => esc_html__('Appearance', 'gnn-terms-popup'),
-      'system'  => esc_html__('System Info', 'gnn-terms-popup'),
     ];
     ?>
     <div class="wrap gnn-admin-wrap">
       <h1><?php esc_html_e('GNN Terms Popup', 'gnn-terms-popup'); ?></h1>
+      <p class="gnn-version-note"><?php printf(esc_html__('Version %s', 'gnn-terms-popup'), esc_html($plugin_data['Version'])); ?></p>
 
       <div class="gnn-tabs-nav" role="tablist">
         <?php foreach ($tabs as $key => $label) : ?>
@@ -210,41 +210,34 @@ class GNN_Terms_Popup {
 
         <div class="gnn-tab-panel" data-panel="general">
           <div class="gnn-card">
-            <?php do_settings_fields('gnn-terms-popup', 'gnn_general'); ?>
+            <table class="form-table gnn-form-table" role="presentation"><tbody>
+              <?php do_settings_fields('gnn-terms-popup', 'gnn_general'); ?>
+            </tbody></table>
           </div>
         </div>
 
         <div class="gnn-tab-panel" data-panel="legal">
           <div class="gnn-card">
             <p class="gnn-card-hint"><?php esc_html_e('If Legal Content Source = Page, the plugin loads the page with that slug and shows it inline when the user clicks "Read Terms". Choose Custom to manage the legal text directly here.', 'gnn-terms-popup'); ?></p>
-            <?php do_settings_fields('gnn-terms-popup', 'gnn_legal'); ?>
+            <table class="form-table gnn-form-table" role="presentation"><tbody>
+              <?php do_settings_fields('gnn-terms-popup', 'gnn_legal'); ?>
+            </tbody></table>
           </div>
         </div>
 
         <div class="gnn-tab-panel" data-panel="scope">
           <div class="gnn-card">
-            <?php do_settings_fields('gnn-terms-popup', 'gnn_scope'); ?>
+            <table class="form-table gnn-form-table" role="presentation"><tbody>
+              <?php do_settings_fields('gnn-terms-popup', 'gnn_scope'); ?>
+            </tbody></table>
           </div>
         </div>
 
         <div class="gnn-tab-panel" data-panel="style">
           <div class="gnn-card">
-            <?php do_settings_fields('gnn-terms-popup', 'gnn_style'); ?>
-          </div>
-        </div>
-
-        <div class="gnn-tab-panel" data-panel="system">
-          <div class="gnn-card">
-            <table class="form-table" role="presentation">
-              <tr>
-                <th scope="row"><?php esc_html_e('Plugin Version', 'gnn-terms-popup'); ?></th>
-                <td><?php echo esc_html($plugin_data['Version']); ?></td>
-              </tr>
-              <tr>
-                <th scope="row"><?php esc_html_e('GitHub Repository', 'gnn-terms-popup'); ?></th>
-                <td>BigDesigner/gnn-terms-popup</td>
-              </tr>
-            </table>
+            <table class="form-table gnn-form-table" role="presentation"><tbody>
+              <?php do_settings_fields('gnn-terms-popup', 'gnn_style'); ?>
+            </tbody></table>
           </div>
         </div>
 
@@ -253,7 +246,9 @@ class GNN_Terms_Popup {
     </div>
 
     <style>
-      .gnn-admin-wrap .gnn-tabs-nav{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0;border-bottom:1px solid #dcdcde;padding-bottom:0}
+      .gnn-admin-wrap{max-width:900px}
+      .gnn-admin-wrap .gnn-version-note{color:#787c82;margin-top:-4px}
+      .gnn-admin-wrap .gnn-tabs-nav{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 0;border-bottom:1px solid #dcdcde;padding-bottom:0}
       .gnn-admin-wrap .gnn-tab-btn{
         background:#fff;border:1px solid #dcdcde;border-bottom:none;border-radius:8px 8px 0 0;
         padding:10px 16px;font-weight:600;cursor:pointer;color:#50575e;
@@ -263,11 +258,29 @@ class GNN_Terms_Popup {
       .gnn-admin-wrap .gnn-tab-panel{display:none}
       .gnn-admin-wrap .gnn-tab-panel.is-active{display:block}
       .gnn-admin-wrap .gnn-card{
-        background:#fff;border:1px solid #dcdcde;border-radius:0 8px 8px 8px;
-        padding:20px 24px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;
+        background:#fff;border:1px solid #dcdcde;border-top:none;border-radius:0 0 8px 8px;
+        padding:8px 24px 24px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:20px;
       }
-      .gnn-admin-wrap .gnn-card-hint{color:#50575e;margin-top:0}
-      .gnn-admin-wrap .gnn-card .form-table th{width:260px}
+      .gnn-admin-wrap .gnn-card-hint{color:#50575e}
+
+      /* Field rows: label stacked above the control, full-width fields */
+      .gnn-admin-wrap .gnn-form-table{border-collapse:separate;width:100%}
+      .gnn-admin-wrap .gnn-form-table tr{display:block}
+      .gnn-admin-wrap .gnn-form-table th,
+      .gnn-admin-wrap .gnn-form-table td{
+        display:block;width:100%;padding:0;border:none;
+      }
+      .gnn-admin-wrap .gnn-form-table th{
+        padding-top:20px;padding-bottom:6px;font-weight:600;color:#1d2327;
+      }
+      .gnn-admin-wrap .gnn-form-table td{padding-bottom:4px}
+      .gnn-admin-wrap .gnn-form-table td .description{margin-top:6px;color:#787c82}
+      .gnn-admin-wrap .gnn-form-table input[type="text"],
+      .gnn-admin-wrap .gnn-form-table input[type="number"],
+      .gnn-admin-wrap .gnn-form-table select{
+        width:100%;max-width:520px;
+      }
+      .gnn-admin-wrap .gnn-form-table .wp-editor-wrap{max-width:820px}
 
       /* Toggle switch */
       .gnn-switch{position:relative;display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
