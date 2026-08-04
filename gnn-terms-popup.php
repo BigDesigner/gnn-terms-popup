@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GNN Terms Popup
  * Description: One-time Terms acceptance popup with admin settings and inline expanding Legal text (no redirect).
- * Version: 1.3.14
+ * Version: 1.3.15
  * Author: BigDesigner
  * Author URI: https://github.com/BigDesigner
  * License: GPLv2 or later
@@ -282,6 +282,19 @@ class GNN_Terms_Popup {
       }
       .gnn-admin-wrap .gnn-form-table .wp-editor-wrap{max-width:820px}
 
+      /* Radio list rows */
+      .gnn-radio-list{max-width:520px;display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+      .gnn-radio-row{
+        display:flex;align-items:center;gap:10px;
+        border:1px solid #dcdcde;border-radius:8px;padding:12px 14px;
+        cursor:pointer;background:#fff;transition:border-color .12s ease,background .12s ease;
+      }
+      .gnn-radio-row:hover{border-color:#8c8f94}
+      .gnn-radio-row.is-selected{border-color:#2271b1;background:#f0f6fc}
+      .gnn-radio-row input[type="radio"]{margin:0}
+      .gnn-radio-row input[type="radio"]:checked{border-color:#2271b1;background-color:#2271b1;box-shadow:none}
+      .gnn-radio-row span{font-weight:500;color:#1d2327}
+
       /* Toggle switch */
       .gnn-switch{position:relative;display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
       .gnn-switch input{position:absolute;opacity:0;width:0;height:0}
@@ -320,6 +333,15 @@ class GNN_Terms_Popup {
       try { saved = localStorage.getItem(STORAGE_KEY); } catch(e){}
       var initial = (saved && document.querySelector('.gnn-tab-panel[data-panel="'+saved+'"]')) ? saved : 'general';
       activate(initial);
+
+      document.querySelectorAll('.gnn-radio-row input[type="radio"]').forEach(function(input){
+        input.addEventListener('change', function(){
+          document.querySelectorAll('input[name="'+CSS.escape(input.name)+'"]').forEach(function(sibling){
+            var row = sibling.closest('.gnn-radio-row');
+            if (row) row.classList.toggle('is-selected', sibling.checked);
+          });
+        });
+      });
     })();
     </script>
     <?php
@@ -435,17 +457,18 @@ class GNN_Terms_Popup {
 
   public function field_scope() {
     $o = get_option(self::OPT_KEY, $this->get_defaults());
+    $everywhere = intval($o['show_everywhere'] ?? 1);
     ?>
-    <label>
-      <input type="radio" name="<?php echo esc_attr(self::OPT_KEY); ?>[show_everywhere]" value="1" <?php checked(1, intval($o['show_everywhere'] ?? 1)); ?>>
-      <?php esc_html_e('Show on all public pages', 'gnn-terms-popup'); ?>
-    </label>
-    <br>
-    <label>
-      <input type="radio" name="<?php echo esc_attr(self::OPT_KEY); ?>[show_everywhere]" value="0" <?php checked(0, intval($o['show_everywhere'] ?? 1)); ?>>
-      <?php esc_html_e('Only on these paths (comma-separated)', 'gnn-terms-popup'); ?>
-    </label>
-    <br>
+    <div class="gnn-radio-list">
+      <label class="gnn-radio-row <?php echo $everywhere === 1 ? 'is-selected' : ''; ?>">
+        <input type="radio" name="<?php echo esc_attr(self::OPT_KEY); ?>[show_everywhere]" value="1" <?php checked(1, $everywhere); ?>>
+        <span><?php esc_html_e('Show on all public pages', 'gnn-terms-popup'); ?></span>
+      </label>
+      <label class="gnn-radio-row <?php echo $everywhere === 0 ? 'is-selected' : ''; ?>">
+        <input type="radio" name="<?php echo esc_attr(self::OPT_KEY); ?>[show_everywhere]" value="0" <?php checked(0, $everywhere); ?>>
+        <span><?php esc_html_e('Only on these paths (comma-separated)', 'gnn-terms-popup'); ?></span>
+      </label>
+    </div>
     <input type="text" name="<?php echo esc_attr(self::OPT_KEY); ?>[include_paths]" value="<?php echo esc_attr($o['include_paths'] ?? ''); ?>" class="regular-text" style="width:520px" placeholder="/ , /about , /services">
     <p class="description"><?php printf(esc_html__('Use site-relative paths. Example: %s, %s, %s.', 'gnn-terms-popup'), '<code>/</code>', '<code>/prices</code>', '<code>/contact</code>'); ?></p>
     <?php
