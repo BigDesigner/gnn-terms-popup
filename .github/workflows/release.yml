@@ -25,7 +25,7 @@ jobs:
           if [ -n "$VERSION_INPUT" ]; then
             VERSION="$VERSION_INPUT"
           else
-            VERSION=$(grep -m 1 "Version:" gnn-terms-popup.php | awk '{print $NF}')
+            VERSION=$(grep -m 1 "Version:" gnn-terms-popup/gnn-terms-popup.php | awk '{print $NF}')
           fi
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
@@ -34,27 +34,18 @@ jobs:
         run: |
           # Define zip name
           ZIP_NAME="gnn-terms-popup-${{ env.VERSION }}.zip"
-          
+
           # Create a temporary directory for clean build and a subfolder for the plugin
           mkdir -p build/gnn-terms-popup
-          
-          # Use rsync to copy files, excluding dev files and AI context
-          rsync -av --exclude='build' \
-                    --exclude='.git' \
-                    --exclude='.github' \
-                    --exclude='.memory-bank' \
-                    --exclude='memory-bank' \
-                    --exclude='.agents' \
-                    --exclude='.archive' \
-                    --exclude='.specs' \
-                    --exclude='.tasks' \
-                    --exclude='.gitignore' \
-                    --exclude='*.md' \
-                    ./ build/gnn-terms-popup/
-          
+
+          # Plugin source now lives in the gnn-terms-popup/ subfolder; copy its
+          # contents as the zip's top-level plugin folder.
+          rsync -av --exclude='*.md' \
+                    gnn-terms-popup/ build/gnn-terms-popup/
+
           # Zip the build directory
           cd build && zip -r "../$ZIP_NAME" gnn-terms-popup && cd ..
-          
+
           echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
 
       - name: Create GitHub Release
