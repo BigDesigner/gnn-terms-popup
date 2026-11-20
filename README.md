@@ -1,7 +1,7 @@
 # GNN Terms Popup
 
-[![WordPress Version](https://img.shields.io/badge/WordPress-5.0+-blue.svg)](https://wordpress.org)
-[![PHP Version](https://img.shields.io/badge/PHP-7.4+-8892BF.svg)](https://php.net)
+[![WordPress Version](https://img.shields.io/badge/WordPress-5.0--7.2-blue.svg)](https://wordpress.org)
+[![PHP Version](https://img.shields.io/badge/PHP-7.4--8.6-8892BF.svg)](https://php.net)
 [![License](https://img.shields.io/badge/License-GPL%20v2%20or%20later-orange.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![GitHub Release](https://img.shields.io/github/v/release/BigDesigner/gnn-terms-popup?color=brightgreen)](https://github.com/BigDesigner/gnn-terms-popup/releases)
 [![GitHub Downloads](https://img.shields.io/github/downloads/BigDesigner/gnn-terms-popup/total?color=blue)](https://github.com/BigDesigner/gnn-terms-popup/releases)

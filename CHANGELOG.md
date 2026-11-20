@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2026-11-20
+### Fixed
+- **Homepage Scope Sanitization (`K-01`):** Preserved root `/` path in `sanitize()` instead of stripping it via `rtrim()` + `array_filter()`.
+- **Double Escaping (`Ö-01`):** Removed duplicate `esc_html()` call on `$accept_label` and `$read_label` in `render_modal()`.
+- **Updater Safety (`Ö-02`):** Added `isset()` guard for `$body->zipball_url`, prevented caching empty download URLs as valid releases, and returned HTTP `403` via `wp_die()` for unauthorized manual update checks.
+- **Accessibility (`Ö-04`):** Added `role="tabpanel"` and dynamic `aria-selected` updates to admin settings tabs.
+- **i18n (`Ö-03`):** Completed all plugin strings in `languages/gnn-terms-popup.pot` and localized fallback legal-page notice.
+
+### Changed
+- **WP 7.2 Admin Icon (`İ-01`):** Replaced Dashicons font icon with an inline base64 SVG shield icon in `admin_menu()`.
+- **Hard Gate Notice (`İ-02`):** Clarified that Hard Gate disables search engine indexing on gated pages.
+
+## [1.4.0] - 2026-11-18
+### Added
+- **Server-Side Hard Gate Mode (`gate_mode`):** Optional server-side enforcement on `template_redirect` that prevents underlying page HTML delivery until terms are accepted.
+- **WordPress 7.2 & i18n Compliance:** Added `Requires at least: 5.0`, `Tested up to: 7.2`, `Requires PHP: 7.4`, `Domain Path: /languages`, `GNN_Terms_Popup::VERSION`, `load_plugin_textdomain()` on `init` (priority 1), and `languages/gnn-terms-popup.pot`.
+
+### Fixed
+- **Full-Page Cache Invariance:** Removed server-side `$_COOKIE` suppression in Soft Overlay mode so caching plugins never store modal-free HTML for unauthenticated visitors.
+- **Boundary-Safe Path Matching:** Fixed `inList()` prefix collision so `/about` no longer matches `/about-us`.
+- **Dynamic Focus Trap:** Re-queries visible focusable elements dynamically when expanding `#gnn-terms-full` and binds the `keydown` listener only once.
+- **Security & Updater Hardening:** Added `rel="noopener noreferrer"` on external Donate link, switched updater to `wp_safe_remote_get()`, sanitized GitHub release URLs with `esc_url_raw()`, resolved `$plugin_slug` dynamically via `plugin_basename()`, passed `false, false` to `get_plugin_data()`, and added `requires` / `tested` / `requires_php` metadata to `plugin_info()`.
+- **Mobile Viewport:** Added `dvh` fallback (`max-height: 90dvh` / `80dvh`) and `:focus-visible` styling.
+
 ## [1.3.12] - 2026-08-02
 ### Changed
 - **Menu Alignment:** Registered the admin settings menu at position `'79.105'` to align with the GNN Product Family position registry guidelines.
