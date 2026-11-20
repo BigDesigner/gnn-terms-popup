@@ -1,0 +1,207 @@
+# Copyright (C) 2026 BigDesigner
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: GNN Terms Popup 1.4.1\n"
+"Report-Msgid-Bugs-To: https://github.com/BigDesigner/gnn-terms-popup/issues\n"
+"POT-Creation-Date: 2026-11-20 00:36+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: gnn-terms-popup\n"
+
+#: gnn-terms-popup.php
+msgid "Terms & Conditions"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Please Review Our Terms of Service. By clicking 'I Agree' or continuing to use this site, you acknowledge that you have read, understood, and agree to be bound by the Terms and Conditions and our Privacy Policy. This agreement governs your use of [Your Website/Company] services. If you do not accept these terms, please discontinue use of this Site."
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "I Agree"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Read Terms"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Donate"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Settings"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Check Updates"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Popup Enabled"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Enforcement Mode"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Title"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Intro Text (shown by default)"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Accept Button Label"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Read Terms Button Label"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Cookie Lifetime (days)"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Skip for Admins"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Legal Content Source"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "If Source = Page: Page Slug"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "If Source = Custom: Full Legal Text"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Scope"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Primary Color (Yellow)"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Secondary Color (Black)"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "General"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Legal Content"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Display Scope"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Appearance"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "GNN Terms Popup"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Version %s"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "If Legal Content Source = Page, the plugin loads the page with that slug and shows it inline when the user clicks \"Read Terms\". Choose Custom to manage the legal text directly here."
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Save Changes"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Shown by default in the popup above the buttons."
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Page (pull content by slug)"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Custom (use editor below)"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Enter the slug of your Legal page (e.g., %s)."
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "This is used if %s is set to %s."
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "days"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Do not show to administrators"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Show the popup on the site"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Turn off to disable the popup everywhere without deactivating the plugin."
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Soft Overlay (Client-side CSS/JS modal, cache-friendly)"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Hard Gate (Server-side barrier, blocks page content until accepted)"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Hard Gate prevents page HTML delivery before consent (disables page caching and search engine indexing on gated pages)."
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Show on all public pages"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Only on these paths (comma-separated)"
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Use site-relative paths. Example: %s, %s, %s."
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Legal page not found for slug: %s and no custom legal text provided."
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "You must accept to continue using this site."
+msgstr ""
+
+#: gnn-terms-popup.php
+msgid "Please enable JavaScript to proceed."
+msgstr ""
+
+#: inc/updater.php
+msgid "Security check failed."
+msgstr ""
+
+#: inc/updater.php
+msgid "You do not have permission to perform this action."
+msgstr ""

@@ -22,7 +22,12 @@ class GNN_Terms_Popup_Updater
     /**
      * Plugin slug (directory name/main file).
      */
-    private $plugin_slug = 'gnn-terms-popup/gnn-terms-popup.php';
+    private $plugin_slug;
+
+    /**
+     * Plugin directory slug.
+     */
+    private $slug;
 
     /**
      * Transient key for caching the GitHub API response.
@@ -39,6 +44,10 @@ class GNN_Terms_Popup_Updater
      */
     public function __construct()
     {
+        $this->plugin_slug = plugin_basename(dirname(__DIR__) . '/gnn-terms-popup.php');
+        $dir = dirname($this->plugin_slug);
+        $this->slug = ('.' !== $dir && '' !== $dir) ? $dir : 'gnn-terms-popup';
+
         // Add filters for the update pipeline
         add_filter('pre_set_site_transient_update_plugins', array($this, 'check_for_update'));
         add_filter('plugins_api', array($this, 'plugin_info'), 20, 3);
@@ -57,7 +66,7 @@ class GNN_Terms_Popup_Updater
         if (!function_exists('get_plugin_data')) {
             require_once ABSPATH . 'wp-admin/includes/plugin.php';
         }
-        $plugin_data = get_plugin_data(WP_PLUGIN_DIR . '/' . $this->plugin_slug);
+        $plugin_data = get_plugin_data(WP_PLUGIN_DIR . '/' . $this->plugin_slug, false, false);
         return $plugin_data['Version'];
     }
 
@@ -83,7 +92,7 @@ class GNN_Terms_Popup_Updater
             'timeout' => 10,
         );
 
-        $response = wp_remote_get($url, $args);
+        $response = wp_safe_remote_get($url, $args);
 
         if (is_wp_error($response) || 200 !== wp_remote_retrieve_response_code($response)) {
             $sentinel = (object) array('_failed' => true);
@@ -111,8 +120,15 @@ class GNN_Terms_Popup_Updater
             }
         }
 
-        if (empty($download_url)) {
+        if (empty($download_url) && isset($body->zipball_url)) {
             $download_url = $body->zipball_url;
+        }
+
+        $download_url = esc_url_raw($download_url);
+        if (empty($download_url)) {
+            $sentinel = (object) array('_failed' => true);
+            set_transient($this->transient_key, $sentinel, 300); // Cache failure for 5 mins
+            return false;
         }
 
         $release_data = (object) array(
@@ -120,7 +136,7 @@ class GNN_Terms_Popup_Updater
             'download_url' => $download_url,
             'changelog'    => isset($body->body) ? $body->body : '',
             'published_at' => isset($body->published_at) ? $body->published_at : '',
-            'html_url'     => isset($body->html_url) ? $body->html_url : '',
+            'html_url'     => isset($body->html_url) ? esc_url_raw($body->html_url) : '',
         );
 
         set_transient($this->transient_key, $release_data, $this->cache_duration);
@@ -146,11 +162,11 @@ class GNN_Terms_Popup_Updater
 
         if (version_compare($release->version, $local_version, '>')) {
             $obj = new stdClass();
-            $obj->slug        = 'gnn-terms-popup';
+            $obj->slug        = $this->slug;
             $obj->plugin      = $this->plugin_slug;
             $obj->new_version = $release->version;
-            $obj->url         = $release->html_url;
-            $obj->package     = $release->download_url;
+            $obj->url         = esc_url_raw($release->html_url);
+            $obj->package     = esc_url_raw($release->download_url);
             
             $transient->response[$this->plugin_slug] = $obj;
         }
@@ -163,7 +179,7 @@ class GNN_Terms_Popup_Updater
      */
     public function plugin_info($result, $action, $args)
     {
-        if ('plugin_information' !== $action || 'gnn-terms-popup' !== $args->slug) {
+        if ('plugin_information' !== $action || !isset($args->slug) || $this->slug !== $args->slug) {
             return $result;
         }
 
@@ -174,10 +190,13 @@ class GNN_Terms_Popup_Updater
 
         return (object) array(
             'name'          => 'GNN Terms Popup',
-            'slug'          => 'gnn-terms-popup',
+            'slug'          => $this->slug,
             'version'       => $release->version,
             'author'        => 'BigDesigner',
-            'download_link' => $release->download_url,
+            'requires'      => '5.0',
+            'tested'        => '7.2',
+            'requires_php'  => '7.4',
+            'download_link' => esc_url_raw($release->download_url),
             'sections'      => array(
                 'description' => 'One-time Terms acceptance popup with admin settings and inline expanding Legal text.',
                 'changelog'   => nl2br(esc_html($release->changelog)),
@@ -226,14 +245,16 @@ class GNN_Terms_Popup_Updater
                 wp_die(esc_html__('Security check failed.', 'gnn-terms-popup'));
             }
 
-            if (current_user_can('update_plugins')) {
-                delete_transient($this->transient_key);
-                delete_site_transient('update_plugins');
-                
-                // Redirect to the core updates page to show the result
-                wp_safe_redirect(admin_url('update-core.php?force-check=1'));
-                exit;
+            if (!current_user_can('update_plugins')) {
+                wp_die(esc_html__('You do not have permission to perform this action.', 'gnn-terms-popup'), 403);
             }
+
+            delete_transient($this->transient_key);
+            delete_site_transient('update_plugins');
+            
+            // Redirect to the core updates page to show the result
+            wp_safe_redirect(admin_url('update-core.php?force-check=1'));
+            exit;
         }
     }
 
