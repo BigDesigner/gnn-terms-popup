@@ -3,8 +3,8 @@
 This document provides setup, bootstrapping, and execution instructions for the project.
 
 ## 1. Stack Prerequisites
-* **WordPress Core:** `[Inferred]` WordPress 5.0+ (requires native Block Editor / modern settings API support).
-* **PHP Environment:** `[Inferred]` PHP 7.4 or later is recommended.
+* **WordPress Core:** `[Verified]` WordPress 5.0+ (Tested up to: 7.2).
+* **PHP Environment:** `[Verified]` PHP 7.4 or later (`Requires PHP: 7.4`).
 * **Database:** `[Verified]` MySQL/MariaDB database backing the WordPress site. Uses standard `wp_options` table.
 
 ## 2. Package & Dependency Management
@@ -19,17 +19,17 @@ This document provides setup, bootstrapping, and execution instructions for the 
 
 ## 4. CI/CD Pipelines
 * **Pipeline Provider:** `[Verified]` GitHub Actions.
-* **Workflow File:** `[Verified]` [.github/workflows/release.yml](file:///c:/Users/bigde/Documents/Project/gnn-terms-popup/.github/workflows/release.yml)
+* **Workflow File:** `[Verified]` [release.yml](file:///c:/Users/bigde/.antigravity/gnn-terms-popup/.github/workflows/release.yml)
 * **Pipeline Name:** Manual Release.
 * **Trigger Conditions:** `[Verified]` Manual trigger via `workflow_dispatch` (optional input: `version_override`).
 * **Workflow Jobs:**
-  - `build-and-release`: Checks out code, extracts version, runs `rsync` to package clean production assets (excluding dev tools and AI documentation), zips it, and publishes a new GitHub Release with the ZIP attached.
+  - `build-and-release`: Checks out code, extracts version from `gnn-terms-popup/gnn-terms-popup.php`, runs `rsync --exclude='*.md'` on `gnn-terms-popup/` to package clean production assets, zips it, and publishes a new GitHub Release with the ZIP attached.
 
 ## 5. Deployment Topology
 * **Target Environment:** `[Verified]` Self-hosted WordPress instances or WordPress VIP/Cloud environments.
-* **Updates distribution:** `[Verified]` Distributed directly via GitHub Releases. The plugin includes a local updater engine ([updater.php](file:///c:/Users/bigde/Documents/Project/gnn-terms-popup/inc/updater.php)) checking releases.
+* **Updates distribution:** `[Verified]` Distributed directly via GitHub Releases. The plugin includes a local updater engine ([updater.php](file:///c:/Users/bigde/.antigravity/gnn-terms-popup/gnn-terms-popup/inc/updater.php)) checking releases.
 
 ## 6. Suggested Validation Commands
-* **PHP Syntax Validation:** `[Inferred]`
-  - `php -l gnn-terms-popup.php`
-  - `php -l inc/updater.php`
+* **PHP Syntax Validation:** `[Verified]`
+  - `php -l gnn-terms-popup/gnn-terms-popup.php`
+  - `php -l gnn-terms-popup/inc/updater.php`

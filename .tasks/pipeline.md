@@ -6,8 +6,8 @@ This document maps out the current project state, active sprint goals, immediate
 * **Current Stable Version:** `1.4.1`
 * **Release Readiness:** Production-ready packaging is handled via GitHub Actions. A clean git state must be achieved before releasing.
 
-## 2. Active Sprint: Bulletproof Hardening (v1.4.0)
-The goal of this sprint is to eliminate all client-side bypasses, prevent full-page cache poisoning, fix subpath scope false positives, and make plugin paths dynamic (ADR-0009).
+## 2. Completed Sprint: Bulletproof Hardening (v1.4.0 / v1.4.1)
+The goal of this sprint was to eliminate client-side bypasses, prevent full-page cache poisoning, fix subpath scope false positives, make plugin paths dynamic (ADR-0009), and resolve v1.4.1 security/a11y/i18n findings. All sprint tasks are complete.
 
 ### Task Breakdown & Implementation Checklist:
 * [x] **TASK-01 [SEC-PATH-BOUND]: Boundary-Safe Path Matching**
@@ -34,9 +34,8 @@ The goal of this sprint is to eliminate all client-side bypasses, prevent full-p
   - Verification: Ensure directory renames do not break update hooks or `after_install()` file movements.
 
 ## 3. Immediate Next Actions
-1. Confirm ADR-0009 approval and task plan with user.
-2. Begin TASK-01 and TASK-04 (low-risk refactoring).
-3. Implement TASK-02 and TASK-03 (Hard Gate & Cache Invariance).
+1. Verify `v1.4.1` behavior on a live/staging WordPress instance (Hard Gate, `/` scope, admin tabs a11y, SVG menu icon).
+2. Select next backlog item (`FEAT-LOG`, `UI-ENHANCE`, `i18n-INIT`, or `FEAT-ANIM`) for `v1.5.0`.
 
 ## 4. Backlog
 * [ ] **FEAT-LOG:** Implement a database log to record anonymous acceptance timestamps and hashes (compliance audit trail).

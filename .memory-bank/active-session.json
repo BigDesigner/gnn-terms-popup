@@ -3,9 +3,9 @@
   "session_id": "c59d2f3d-51fb-429a-b4cf-6f3b4a2c3d5e",
   "status": "ACTIVE",
   "mode": "Interactive",
-  "timestamp": "2026-07-07T05:27:00+03:00",
+  "timestamp": "2026-11-20T04:09:49+03:00",
   "active_branch": "main",
-  "last_commit": "ae12bc3c6c20de5e167c2dd87f87b4a61cc23631",
+  "last_commit": "4a70e3554fb8d7b9d732bc5a35a8101259b8ea4e",
   "git_history_available": true,
   "worktree_status": "clean",
   "concurrency_lock": {
@@ -14,12 +14,8 @@
     "lock_acquired_at": null
   },
   "current_sprint": {
-    "sprint_id": "v1.4.0",
-    "active_tasks": [
-      "i18n-INIT",
-      "UI-ENHANCE",
-      "SEC-REVIEW"
-    ]
+    "sprint_id": "v1.4.1",
+    "active_tasks": []
   },
   "tracked_memory_areas": {
     "adr": ".memory-bank/adr/",
