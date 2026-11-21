@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GNN Terms Popup
  * Description: One-time Terms acceptance popup with admin settings and inline expanding Legal text (no redirect).
- * Version: 1.4.1
+ * Version: 1.4.2
  * Requires at least: 5.0
  * Tested up to: 7.2
  * Requires PHP: 7.4
@@ -22,7 +22,7 @@ if (file_exists(plugin_dir_path(__FILE__) . 'inc/updater.php')) {
 }
 
 class GNN_Terms_Popup {
-  const VERSION = '1.4.1';
+  const VERSION = '1.4.2';
   const OPT_KEY = 'gnn_terms_popup_options';
   const COOKIE  = 'gnn_terms_accepted';
 
