@@ -76,23 +76,29 @@ class GNN_Terms_Popup_Updater
     }
 
     /**
-     * Get the current local plugin version.
+     * Get the current local plugin version directly from the on-disk plugin header.
+     * Reading from disk avoids stale in-memory constants during the same-request upgrade cycle.
      *
      * @return string
      */
     private function get_local_version()
     {
+        $main_file = WP_PLUGIN_DIR . '/' . $this->plugin_basename;
+        if (file_exists($main_file)) {
+            if (function_exists('clearstatcache')) {
+                clearstatcache(true, $main_file);
+            }
+            $headers = get_file_data($main_file, array('Version' => 'Version'), 'plugin');
+            if (!empty($headers['Version'])) {
+                return trim((string) $headers['Version']);
+            }
+        }
+
         if (defined('GNN_Terms_Popup::VERSION')) {
             return (string) GNN_Terms_Popup::VERSION;
         }
 
-        if (!function_exists('get_plugin_data')) {
-            require_once ABSPATH . 'wp-admin/includes/plugin.php';
-        }
-        $main_file   = WP_PLUGIN_DIR . '/' . $this->plugin_basename;
-        $plugin_data = get_plugin_data($main_file, false, false);
-
-        return !empty($plugin_data['Version']) ? (string) $plugin_data['Version'] : '0.0.0';
+        return '0.0.0';
     }
 
     /**
